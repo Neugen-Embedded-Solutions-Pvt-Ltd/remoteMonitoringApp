@@ -1,3 +1,5 @@
+-- SQL queries (only model use)
+
 -- creatin users tables of users to store basic information
 -- table name edge_device
 CREATE TABLE users(

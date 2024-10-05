@@ -1,3 +1,5 @@
+// Each error class error 
+
 const CustomeError = require('./customeError');
 const statusCodes = require('./statusCodes');
 

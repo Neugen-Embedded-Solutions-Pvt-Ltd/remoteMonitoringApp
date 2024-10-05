@@ -1,3 +1,5 @@
+// common status codes
+
 const statusCodes = {
     OK : 200,
     CREATED : 201,

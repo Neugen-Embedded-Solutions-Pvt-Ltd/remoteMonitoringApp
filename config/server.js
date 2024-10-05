@@ -1,4 +1,4 @@
-
+// configuration server port number 
 const dotenv = require('dotenv');
 
 dotenv.config();

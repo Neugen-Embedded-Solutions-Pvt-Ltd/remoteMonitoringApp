@@ -1,3 +1,5 @@
+// logs of server activity 
+
 const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");

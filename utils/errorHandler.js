@@ -1,6 +1,8 @@
+// anything goes down in codebase this error will be passed
+
 const handleError = (err, req,res,next) => {
-  console.error('running');
-  res.status(500).send('Internal Server Error');
+  console.error(err.stack);
+  res.status(500).json({error: 'Internal Server Error'});
 };
 
 module.exports = {handleError};

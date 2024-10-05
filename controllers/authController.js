@@ -1,20 +1,10 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
-const randomstring = require('randomstring');
 const sendEmail = require('../utils/sendemails');
-
-// generate OTP 
-
-function generateOTP() {
-  return randomstring.generate({
-    length: 4,
-    charset: 'numeric'
-  })
-}
-
+ 
+// Register user 
 exports.register = async (req, res) => {
-  console.log('register')
   try {
     const {
       device_id,
@@ -40,15 +30,17 @@ exports.register = async (req, res) => {
       address,
       country,
       pincode
-    });
+    }); // store details databses
 
-    res.status(200).send('user created successfully');
+    res.status(201).send('user created successfully');
 
   } catch (err) {
     console.log(err);
     res.status(500).send('error register user');
   }
 };
+
+// Login user 
 exports.login = async (req, res) => {
   try {
     const {
@@ -57,11 +49,11 @@ exports.login = async (req, res) => {
     } = req.body;
    
     // Find user by email
-    const users = await User.findByEmail(email);
+    const users = await User.findByEmail(email); // login with email
     if (users.length === 0) return res.status(404).send("User not found.");
   
     const user = users[0];
-    const passwordIsValid = bcrypt.compareSync(password, user.password);
+    const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
 
     if (!passwordIsValid) return res.status(401).send("Invalid credentials.");
     console.log(user.id)
@@ -70,7 +62,7 @@ exports.login = async (req, res) => {
       id: user.id
     }, process.env.JWT_SECRET, {
       expiresIn: 86400, // 24 hours
-    });
+    }); // generate JWT token 
    
     res.status(200).send({
       message: 'User loged in',
@@ -82,23 +74,23 @@ exports.login = async (req, res) => {
   }
 };
 
+//Send OTP   (currently not using)
 exports.sendOtps = async (req, res) => {
   try {
     const {
       email
     } = req.body;
-    const otp = generateOTP();
-    // console.log({email, otp});
+    const otp = generateOTP(); // gerate OTP
     await User.sendOTP({
       email,
       otp
-    });
-    console.log('login ... sent')
+    });  //store OTP in DB and and delete once it's used
+    console.log('OTP sent')
     await sendEmail({
       to: email,
       subject: 'your OTP',
       message: `<h2>Your OTP ${otp} </h2>`
-    }) 
+    }); // email template for shoe OTP
     
     res.status(200).send({
       message: "Your Otp send to your email Address"
@@ -111,7 +103,9 @@ exports.sendOtps = async (req, res) => {
       error: 'Internal server error'
     });
   }
-}
+};
+
+// verify OTP (currently not using)
 exports.verifyOtp = async (req, res, next) => {
   try {
     const {
@@ -122,7 +116,7 @@ exports.verifyOtp = async (req, res, next) => {
     const validOtp = await User.validateOtp({
       email,
       otp
-    });
+    }); // validateing OTP with database
     if (validOtp) {
       res.status(200).json({
         success: true,
@@ -136,7 +130,7 @@ exports.verifyOtp = async (req, res, next) => {
       });
     };
   } catch (err) {
-    console.error('Error verifying OTP:', error);
+    console.error('Error verifying OTP:', err);
     res.status(500).json({
       success: false,
       error: 'Internal server error'

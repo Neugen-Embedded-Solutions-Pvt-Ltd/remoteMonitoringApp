@@ -2,15 +2,13 @@ const express = require('express');
 const router = express.Router();
 const app = express();
 
-
 const authController = require('../controllers/authController');
-const authMiddleware = require('../middleware/authMiddleware'); // verfity the token when get request made
-const {
-    weatherApi
-} = require('../config/proxy');
+ 
+const { weatherApi } = require('../config/weatherApi');
 
 router.post('/register', authController.register); //register the user API endpoint   Sample routes-> http://localhost:3000/auth/login
 
+// api documentation
 /**
  * @swagger
  * /auth/register:
@@ -93,7 +91,7 @@ router.post('/register', authController.register); //register the user API endpo
  */
 
 router.post('/login', authController.login); // login the user API endpoint
-router.post('/sendOtp', authController.sendOtps);
+router.post('/sendOtp', authController.sendOtps); 
+router.get('/weather', weatherApi); // teting purpose
 
-router.get('/weather', weatherApi);
 module.exports = router;

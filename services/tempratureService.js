@@ -1,4 +1,4 @@
-// Maual tempratuare setting to the device
+// Basic details for the device
 
 class AutoTemprature {
     constructor(currentTemperature, deviceTempraure, typeTempratureMode) {

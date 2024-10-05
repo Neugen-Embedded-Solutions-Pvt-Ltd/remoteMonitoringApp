@@ -2,8 +2,10 @@ const db = require('../config/database');
 const util = require('util');
 
 const query = util.promisify(db.query).bind(db);
-const User = {
 
+// User model for to store in db queries
+const User = {
+    // user registration
     create: async (userData) => {
         try {
             const insertUserQuery = 'INSERT INTO users (device_id, firstName, lastName, email, password) VALUES(?, ?, ?, ?, ?)';
@@ -21,10 +23,10 @@ const User = {
         } catch (e) {
             console.log(e)
             throw new Error('Network timeout Error')
-
         }
     },
-
+    
+    //user login
     findByEmail: async (email) => {
         try {
             console.log(email);
@@ -38,6 +40,8 @@ const User = {
         }
 
     },
+
+    // sent OTP (not implemented)
     sendOTP: async (otpParam) => {
 
         try {
@@ -51,6 +55,8 @@ const User = {
             throw new Error('Network timeout Error')
         }
     },
+
+     // validate OTP (not implemented)
     validateOtp: async (otpParam) => {
 
         try {

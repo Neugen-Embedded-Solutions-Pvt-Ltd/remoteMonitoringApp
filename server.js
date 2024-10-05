@@ -3,42 +3,35 @@ const bodyParser = require('body-parser'); // JSON parser
 const swaggerJsdoc = require("swagger-jsdoc"); // swagger API to JSON
 const swaggerUi = require("swagger-ui-express"); // UI for API endpoints
 const cors = require('cors'); //Cross-Origin Resource Sharing 
-const authRoutes = require('./routes/authRoutes'); // Loginmiddleware
-const dataRoutes = require('./routes/dataRoutes'); // Loginmiddleware
+const authRoutes = require('./routes/authRoutes'); // Login middleware
+const dataRoutes = require('./routes/dataRoutes'); // Temprature middleware
 const setupMiddleware = require('./logging/logger'); // logging in terminal
-const {
-    verifyToken
-} = require('./middleware/authMiddleware');
-const {
-    handleError
-} = require('./utils/errorHandler')
+const {verifyToken } = require('./middleware/authMiddleware'); // validate API request for particular endpoints after login
+const {handleError } = require('./utils/errorHandler'); // middleware error handler
+const {limiter} = require('./middleware/ratelimit'); // prevent network traffic and bot attacks
+require('./config/mqtt'); // establish MQTT connection
+const config = require('./config/server'); //server port number
 
-const {
-    limiter
-} = require('./middleware/ratelimit')
-require('./config/mqtt');
-const config = require('./config/server'); //sever port number
+const app = express(); // initilize express
 
-const app = express();
+setupMiddleware(app); // logging in console
 
-setupMiddleware(app); //logging middleware
-
-app.use(express.json()); //midddileware data format in json format
-app.use(bodyParser.json()); //paseses json 
+app.use(express.json()); // middileware data in the json format
+app.use(bodyParser.json()); // parses json data
 app.use(bodyParser.urlencoded({
     extended: false
 })); // parse URL encoded form data -> avalible in req.body
-app.use(cors()); //One domain to interact with resources from other domains
+app.use(cors()); // restric the resources sharing globally
 //routes
 const corsOptions = {
-    origin: 'http://localhost:3000', //(https://your-client-app.com)     
+    origin: 'http://localhost:3000', //(https://your-client-app.com)    allowing particular origin 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 };
-app.use(cors(corsOptions));
-app.use(handleError);
+app.use(cors(corsOptions)); // implementing the cors
+app.use(handleError); // middleware error handler
 
-
+// API documentation 
 const swaggerOption = {
     swaggerDefinition: (swaggerJsdoc.Options = {
         info: {
@@ -55,14 +48,14 @@ const swaggerOption = {
 };
 
 const swaggerDocs = swaggerJsdoc(swaggerOption);
-app.use("/rest-api", swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+app.use("/rest-api", swaggerUi.serve, swaggerUi.setup(swaggerDocs)); // API documentation 
 
+ 
+app.use('/auth', limiter, authRoutes); // login endpoint
+app.use('/api', verifyToken, authRoutes); // authorized end-points 
 
-app.use('/auth', limiter, authRoutes);
-app.use('/api', verifyToken, authRoutes);
-
-app.use('/iot', dataRoutes);
+app.use('/iot', dataRoutes); // temprature end-points
 
 app.listen(config.port, () => {
-    console.log(`server listening on ${config.port}`)
+    console.log(`server listening on ${config.port}`); // hosting port number
 });

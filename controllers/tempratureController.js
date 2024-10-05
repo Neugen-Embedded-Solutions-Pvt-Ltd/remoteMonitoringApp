@@ -1,16 +1,17 @@
-const AutoTemprature = require('../services/tempratureService');
-const dotenv = require('dotenv');
+const AutoTemprature = require('../services/tempratureService'); // basic information of temprature 
+const dotenv = require('dotenv'); 
 const {
     promisify
-  } = require('util'); 
+  } = require('util');  // Promise to async function
 dotenv.config();
-const mqttClient = require('../config/mqtt');
+const mqttClient = require('../config/mqtt'); // importing mqtt configuration
 
-const subscribeAsync = promisify(mqttClient.subscribe).bind(mqttClient);
+const subscribeAsync = promisify(mqttClient.subscribe).bind(mqttClient); // using in async instead of PROMISE
 const publishAsync = promisify(mqttClient.publish).bind(mqttClient); 
 
 const BASEURI = process.env.WEATHER_API_URI;
 const weatherKey = process.env.WEATHER_API_KEY;
+
 const cityWeather = "india"
 let currentTemperature;
 // Variable to store the last sent temperature value
@@ -40,53 +41,14 @@ const weatherApi = async () => {
 };
 weatherApi().then(currentTemperature => {
     console.log(currentTemperature);
-});
-exports.setTemprature = async (req, res) => {
-    try {
-        const {
-            manualTemparature
-        } = req.body;
-        const temp = new AutoTemprature(currentTemperature, manualTemparature);
-        let topic = 'Temperature';
-        let setTemprature = temp.deviceTempraure;
-        mqttClient.subscribe([topic], ((err) => {
-            if (err) {
-                console.log(err.message);
-            }
-            console.log(`Subscribed to topic ${topic}`);
-        }))
-        setInterval(() => {
-            mqttClient.publish([topic], JSON.stringify({
-                setTemprature
-            }));
-            console.log(`IOT temprature: ${setTemprature}°c`)
-        }, 5000); // 5mins interval for refresh
-        mqttClient.on('message', ([topic], message) => {
-            const data = JSON.parse(message.toString());
+}); 
 
-            console.log(`received temperature: ${data.setTemprature}°C`);
-        })
-        res.status(200).send({
-            data: temp,
-            message: "Temprature sent to device"
-        })
-    } catch (err) {
-        console.log(err.message);
-
-        res.status(500).send({
-            message: "Internal Server error "
-        })
-    }
-};
-  
-let topic = 'Temperatures'; 
+// pulish temprature the data
+let topic = 'Temperatures';  // topic for mqtt connectiuon 
 async function publishTemperature(newTemperature) {
-    // return new Promise((resolve, reject) => {
-
     if (newTemperature !== lastTemperature) {
-
-
         try {
+            // makes the subcribe
             await subscribeAsync([topic])
             console.log(`Subscribed to topic: ${topic}`);
 
@@ -108,12 +70,13 @@ async function publishTemperature(newTemperature) {
         resolve('Temperature has not changed.');
     }
 }
+// mqtt receive the message 
 mqttClient.on('message', (topic, message) => {
-    const data = JSON.parse(message.toString());
-  
+    const data = JSON.parse(message.toString());  
     console.log(`received temperature: ${data.temperature}°C`);
 })
 
+// end-point for user view and send temperature
 exports.setAutomaticTemprature = async (req, res) => {
     try {
         const {
@@ -121,21 +84,21 @@ exports.setAutomaticTemprature = async (req, res) => {
             manualTemparature
         } = req.body;  
         if (typeTemprature) {
-            const temp = new AutoTemprature(currentTemperature, null, typeTemprature);
+            const temp = new AutoTemprature(currentTemperature, null, typeTemprature); // class for basic information about temprature to device
             let newSetupTemprature = temp.setTemperatureMode();
-            const tempratureValue = await publishTemperature(newSetupTemprature);            
+            const tempratureValue = await publishTemperature(newSetupTemprature);  // sending temperature to MQTT            
             res.status(200).send({
                 data: tempratureValue,
                 message: `${newSetupTemprature}°C ${typeTemprature} temperature applied to device successfully`
-            });
+            }); // conformation of temperature to client
         } else {
             const temp = new AutoTemprature(currentTemperature, manualTemparature, null);
             let setTemprature = temp.deviceTempraure;
-            const tempratureValue = await publishTemperature(setTemprature); 
+            const tempratureValue = await publishTemperature(setTemprature); // sending temperature to MQTT  
             res.status(200).send({
                 data: tempratureValue,
                 message: `${setTemprature}°C temperature applied to device successfully`
-            });
+            });// conformation of temperature to client
         }
     } catch (error) {
         console.log(error.message);

@@ -1,3 +1,5 @@
+// OTP sender (not implemented)
+
 const nodeMailer = require('nodemailer');
 
 const dotenv = require('dotenv');

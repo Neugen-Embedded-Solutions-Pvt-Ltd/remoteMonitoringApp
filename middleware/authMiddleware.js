@@ -1,19 +1,21 @@
-const jwt = require('jsonwebtoken');
+// TOken based Authorization
+
+const jwt = require('jsonwebtoken'); // genrate token
 
 function verifyToken(req, res, next) {
     try { 
 
-        let token = req.headers.authorization; 
+        let token = req.headers.authorization;  // get token from header
         if (!token) return res.status(403).send({
             auth: false,
             message: 'token not provided'
-        });
-        token = token.split(" ")[1]; 
-        let verfiedUser = jwt.verify(token, process.env.JWT_SECRET);
+        }); // validate token provided 
+        token = token.split(" ")[1]; // seprate the Authorization from token
+        let verfiedUser = jwt.verify(token, process.env.JWT_SECRET); //validating with secret key
         if (!verfiedUser) return res.status(403).send({
             message: "Unauthorized request"
-        });
-        console.log(req.user);
+        }); //if not authorized not allowed
+ 
         req.user = verfiedUser;
         next(); 
     } catch (err) {
