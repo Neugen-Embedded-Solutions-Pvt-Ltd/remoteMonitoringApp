@@ -6,7 +6,7 @@ const weatherKey = process.env.WEATHER_API_KEY;
 const cityWeather = "india";
 
 
-exports.proxyMiddlwware = async (req, res) => {
+exports.weatherApi = async (req, res) => {
   const weatherUrl = `${BASEURI}/${cityWeather}?unitGroup=us&key=${weatherKey}&Content-Type=json`; // Replace with your actual weather API URL
   console.log(weatherUrl);
   try {
@@ -36,11 +36,6 @@ exports.proxyMiddlwware = async (req, res) => {
   }
 };
 
-// const proxyMiddlwware = () => createProxyMiddleware({
-//     target: weatherUrl,
-//     changeOrigin: true,
 
-// })
-// exports.setupProxies = proxyMiddlwware;
+
 // https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Bangalore?unitGroup=us&key=FH6NQ4SCXC99EJQMUEQED2QHW&contentType=json
-// https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/india?unitGroup=us&key=FH6NQ4SCXC99EJQMUEQED2QHW
