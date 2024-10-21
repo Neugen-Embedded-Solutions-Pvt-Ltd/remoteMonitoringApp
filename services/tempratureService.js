@@ -1,5 +1,4 @@
 // Basic details for the device
-
 class AutoTemprature {
     constructor(currentTemperature, deviceTempraure, typeTempratureMode) {
         this.currentTemperature = currentTemperature;

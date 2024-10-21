@@ -25,11 +25,10 @@ const options = {
     ]
   },
   // looks for configuration in specified directories
-  apis: ['./routes/*.js'],
+  apis: ['./swagger/*.js'],
 }
 const swaggerSpec = swaggerJsdoc(options)
-function swaggerDocs(app, port) {
-  console.log(port)
+function swaggerDocs(app) {
   // Swagger PageF
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
   // Documentation in JSON format
@@ -38,4 +37,4 @@ function swaggerDocs(app, port) {
     res.send(swaggerSpec)
   })
 }
-module.exports = swaggerDocs
+module.exports = swaggerDocs;

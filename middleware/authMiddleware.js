@@ -2,9 +2,9 @@
 
 const jwt = require('jsonwebtoken'); // genrate token
 
+// security for API authorization
 function verifyToken(req, res, next) {
     try { 
-
         let token = req.headers.authorization;  // get token from header
         if (!token) return res.status(403).send({
             auth: false,

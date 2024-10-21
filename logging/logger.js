@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
 
+// security header in API requests
 function setupMiddleware(app) {
     // Morgan for logging
     app.use(morgan('combined'));

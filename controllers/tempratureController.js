@@ -17,6 +17,7 @@ let currentTemperature;
 // Variable to store the last sent temperature value
 let lastTemperature = null;
 
+// getting todays's weather details
 const weatherApi = async () => {
     const weatherUrl = `${BASEURI}/${cityWeather}?unitGroup=us&key=${weatherKey}&Content-Type=json`; // Replace with your actual weather API URL
 
@@ -43,7 +44,7 @@ weatherApi().then(currentTemperature => {
     console.log(currentTemperature);
 }); 
 
-// pulish temprature the data
+// pulish temprature the data using MQTT
 let topic = 'Temperatures';  // topic for mqtt connectiuon 
 async function publishTemperature(newTemperature) {
     if (newTemperature !== lastTemperature) {
@@ -69,12 +70,13 @@ async function publishTemperature(newTemperature) {
         console.log('Temperature has not changed, no need to publish.');
         resolve('Temperature has not changed.');
     }
-}
+};
+
 // mqtt receive the message 
 mqttClient.on('message', (topic, message) => {
     const data = JSON.parse(message.toString());  
     console.log(`received temperature: ${data.temperature}°C`);
-})
+});
 
 // end-point for user view and send temperature
 exports.setAutomaticTemprature = async (req, res) => {

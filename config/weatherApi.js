@@ -5,7 +5,7 @@ const BASEURI = process.env.WEATHER_API_URI;
 const weatherKey = process.env.WEATHER_API_KEY;
 const cityWeather = "india";
 
-
+// fetching the weather details
 exports.weatherApi = async (req, res) => {
   const weatherUrl = `${BASEURI}/${cityWeather}?unitGroup=us&key=${weatherKey}&Content-Type=json`; // Replace with your actual weather API URL
   console.log(weatherUrl);
@@ -32,7 +32,5 @@ exports.weatherApi = async (req, res) => {
     });
   }
 };
-
-
 
 // https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/Bangalore?unitGroup=us&key=FH6NQ4SCXC99EJQMUEQED2QHW&contentType=json
