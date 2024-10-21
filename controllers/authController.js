@@ -2,7 +2,8 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const sendEmail = require('../utils/sendemails');
- 
+const mysqlError = require('mysql-error-codes')
+
 // Register user 
 exports.register = async (req, res) => {
   try {
@@ -11,13 +12,15 @@ exports.register = async (req, res) => {
       firstName,
       lastName,
       email,
-      password,
-      phone_number,
-      address,
-      country,
-      pincode
-    } = req.body;
-    console.table(email);
+      password
+    } = req.body; 
+    let findUser = await User.findByEmail(email);
+    console.table(findUser)
+    if(findUser.length != 0) {
+      return res.send({
+        message: 'User already exist'
+      });
+    }
     const hasedPassword = bcrypt.hashSync(password, 8);
 
     await User.create({
@@ -25,18 +28,20 @@ exports.register = async (req, res) => {
       firstName,
       lastName,
       email,
-      password: hasedPassword,
-      phone_number,
-      address,
-      country,
-      pincode
+      password: hasedPassword
     }); // store details databses
 
-    res.status(201).send('user created successfully');
+    res.status(201).send({
+      status: 200,
+      message: 'user created successfully'
+    });
 
   } catch (err) {
     console.log(err);
-    res.status(500).send('error register user');
+    res.status(500).send({
+      codes: err,
+      message: 'error register user'
+    });
   }
 };
 
@@ -47,11 +52,11 @@ exports.login = async (req, res) => {
       email,
       password
     } = req.body;
-   
+
     // Find user by email
     const users = await User.findByEmail(email); // login with email
     if (users.length === 0) return res.status(404).send("User not found.");
-  
+
     const user = users[0];
     const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
 
@@ -63,9 +68,10 @@ exports.login = async (req, res) => {
     }, process.env.JWT_SECRET, {
       expiresIn: 86400, // 24 hours
     }); // generate JWT token 
-   
+
     res.status(200).send({
-      message: 'User loged in',
+      status: 200,
+      message: 'User logedin',
       auth: true,
       token
     });
@@ -84,14 +90,14 @@ exports.sendOtps = async (req, res) => {
     await User.sendOTP({
       email,
       otp
-    });  //store OTP in DB and and delete once it's used
+    }); //store OTP in DB and and delete once it's used
     console.log('OTP sent')
     await sendEmail({
       to: email,
       subject: 'your OTP',
       message: `<h2>Your OTP ${otp} </h2>`
     }); // email template for shoe OTP
-    
+
     res.status(200).send({
       message: "Your Otp send to your email Address"
     });

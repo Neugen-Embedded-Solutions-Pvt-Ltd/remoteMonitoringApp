@@ -1,16 +1,21 @@
 const express = require('express'); //API craetion
 const bodyParser = require('body-parser'); // JSON parser
-const swaggerJsdoc = require("swagger-jsdoc"); // swagger API to JSON
-const swaggerUi = require("swagger-ui-express"); // UI for API endpoints
+const swaggerJSDoc = require("swagger-jsdoc"); // swagger API to JSON
+const swaggerUI = require("swagger-ui-express"); // UI for API endpoints
 const cors = require('cors'); //Cross-Origin Resource Sharing 
 const authRoutes = require('./routes/authRoutes'); // Login middleware
 const dataRoutes = require('./routes/dataRoutes'); // Temprature middleware
 const setupMiddleware = require('./logging/logger'); // logging in terminal
-const {verifyToken } = require('./middleware/authMiddleware'); // validate API request for particular endpoints after login
-const {handleError } = require('./utils/errorHandler'); // middleware error handler
-const {limiter} = require('./middleware/ratelimit'); // prevent network traffic and bot attacks
+const {
+    verifyToken
+} = require('./middleware/authMiddleware'); // validate API request for particular endpoints after login
+const {
+    handleError
+} = require('./utils/errorHandler'); // middleware error handler
+const {
+    limiter
+} = require('./middleware/ratelimit'); // prevent network traffic and bot attacks
 require('./config/mqtt'); // establish MQTT connection
-const config = require('./config/server'); //server port number
 
 const app = express(); // initilize express
 
@@ -30,32 +35,32 @@ const corsOptions = {
 };
 app.use(cors(corsOptions)); // implementing the cors
 app.use(handleError); // middleware error handler
-
+let swaggerDocs = require('./swagger.js');
 // API documentation 
-const swaggerOption = {
-    swaggerDefinition: (swaggerJsdoc.Options = {
-        info: {
-            version: "3.0.0",
-            title: "Remote Monitoring System",
-            description: "API documentation",
-            contact: {
-                name: "Manoj ",
-            },
-            servers: ["http://localhost:3001/"],
-        },
-    }),
-    apis: ["server.js", "./routes/*.js"],
+const swaggerDefinition = {
+    openapi: '3.0 .0',
+    info: {
+        title: 'My API',
+        version: '1.0 .0',
+        description: 'My API Description',
+    },
 };
 
-const swaggerDocs = swaggerJsdoc(swaggerOption);
-app.use("/rest-api", swaggerUi.serve, swaggerUi.setup(swaggerDocs)); // API documentation 
+const options = {
+    swaggerDefinition,
+    apis: ['./routes/*.js'], // Path to the API routes in your Node.js application
+};
 
- 
+const swaggerSpec = swaggerJSDoc(options);
+app.use("/restapi", swaggerUI.serve, swaggerUI.setup(swaggerSpec)); // API documentation 
+
+
 app.use('/auth', limiter, authRoutes); // login endpoint
 app.use('/api', verifyToken, authRoutes); // authorized end-points 
 
 app.use('/iot', dataRoutes); // temprature end-points
-
-app.listen(config.port, () => {
-    console.log(`server listening on ${config.port}`); // hosting port number
+let port = process.env.SERVICE_PORT
+swaggerDocs(app,port );
+app.listen(process.env.SERVICE_PORT, () => {
+    console.log(`server listening on ${process.env.SERVICE_PORT}`); // hosting port number
 });
