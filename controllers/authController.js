@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const sendEmail = require('../utils/sendemails');
+const {
+  generateOTP
+} = require('../utils/helpers');
 
 
 const authController = {
@@ -15,12 +18,19 @@ const authController = {
         email,
         password
       } = req.body;
-      let findUser = await User.findByEmail(email);
-      console.table(findUser)
+      let findUser = await User.findByEmail(email); 
       if (findUser.length != 0) {
         return res.send({
           status: 400,
           message: 'User already exist'
+        });
+      }
+      let getDeviceId = await User.getDeviceId(device_id);
+      console.log(getDeviceId)
+      if (getDeviceId == 0) {
+        return res.send({
+          status: 400,
+          message: 'Device is not registered'
         });
       }
       const hasedPassword = bcrypt.hashSync(password, 8);
@@ -117,23 +127,38 @@ const authController = {
       })
     }
   },
-  //Send OTP   (currently not using)
+  //Send OTP 
   sendOtps: async (req, res) => {
     try {
       const {
         email
       } = req.body;
       const otp = generateOTP(); // gerate OTP
-      await User.sendOTP({
+      let response = await User.sendOTP({
         email,
         otp
-      }); //store OTP in DB and and delete once it's used
-      console.log('OTP sent')
-      await sendEmail({
+      });
+      console.log(response)
+      let string = JSON.stringify(response);
+      let json = JSON.parse(string);
+
+      async function deleteOtp() {
+        let response = await User.deleteOtps(json[0].otp_id);
+        if (response == 0) {
+          return res.send({
+            status: 400,
+            message: 'Otp expired',
+            data: results
+          })
+        }
+      }
+      setTimeout(deleteOtp, 50000); // delete OTP after 3 minutes
+      let options = {
         to: email,
         subject: 'your OTP',
         message: `<h2>Your OTP ${otp} </h2>`
-      }); // email template for shoe OTP
+      }
+      await sendEmail(options); // email template for shoe OTP
 
       res.status(200).send({
         message: "Your Otp send to your email Address"
@@ -156,22 +181,32 @@ const authController = {
         otp
       } = req.body;
 
+      // validateing OTP with database
       const validOtp = await User.validateOtp({
         email,
         otp
-      }); // validateing OTP with database
+      });
+
+      if (validOtp == 0) {
+        return res.send({
+          status: 400,
+          message: 'not valid OTP'
+        })
+      }
       if (validOtp) {
         res.status(200).json({
+          status: 200,
           success: true,
           message: 'Your OTP is valid',
         });
+
+        //after using OTP delete from DB
+        let string = JSON.stringify(validOtp);
+        let json = JSON.parse(string);
+        await User.deleteOtps(json[0].otp_id);
+
         next();
-      } else {
-        res.status(400).json({
-          success: false,
-          message: 'Invalid OTP'
-        });
-      };
+      }
     } catch (err) {
       console.error('Error verifying OTP:', err);
       res.status(500).json({
@@ -179,8 +214,7 @@ const authController = {
         error: 'Internal server error'
       });
     }
-  }
-
+  }, 
 }
 
 module.exports = authController;

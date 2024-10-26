@@ -15,7 +15,7 @@ function verifyToken(req, res, next) {
         if (!verfiedUser) return res.status(403).send({
             message: "Unauthorized request"
         }); //if not authorized not allowed
- 
+
         req.user = verfiedUser;
         next(); 
     } catch (err) {

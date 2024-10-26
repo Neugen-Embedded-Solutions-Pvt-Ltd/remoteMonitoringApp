@@ -3,8 +3,9 @@
 const mysql = require('mysql');
 const dotenv = require('dotenv');
 const util = require('util');
-
-dotenv.config({path : `.env.${process.env.NODE_ENV}`});
+dotenv.config({
+    path: `.env.${process.env.NODE_ENV}`
+});
 const tableQueries = require('../schemas/schma');
 
 // create connection to database
@@ -15,7 +16,7 @@ const db = mysql.createConnection({
     host: process.env.DB_HOST,
 });
 
-const query = util.promisify(db.query).bind(db);
+const query = util.promisify(db.query).bind(db); // remove promise method from codebase, which is older method
 
 // establish the connection 
 db.connect((err) => {
@@ -28,12 +29,12 @@ db.connect((err) => {
 });
 
 // create the table if not already created & selfinvoking
-(async() =>{
+(async () => {
     try {
-        let result = await query(tableQueries.userQuery);
-     } catch (error) {
-         console.log(error);
-     }
+        await query(tableQueries.userQuery);
+    } catch (error) {
+        console.log(error);
+    }
 })();
- 
-module.exports = db;
+
+module.exports = query;
