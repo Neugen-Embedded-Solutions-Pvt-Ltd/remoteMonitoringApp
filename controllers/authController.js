@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/user');
 const sendEmail = require('../utils/sendemails');
 
+
 const authController = {
   // Register user 
   register: async (req, res) => {
@@ -18,7 +19,7 @@ const authController = {
       console.table(findUser)
       if (findUser.length != 0) {
         return res.send({
-          status:400, 
+          status: 400,
           message: 'User already exist'
         });
       }
@@ -79,6 +80,43 @@ const authController = {
     }
   },
 
+  // Get All users data
+  GetAllUsers: async (req, res) => {
+    try {
+      let allUsersdata = await User.GetAllUser();
+      // remove password from user object
+      const results = allUsersdata.map(user => {
+        return Object.keys(user)
+          .filter(key => !key.includes('password'))
+          .reduce((obj, key) => {
+            return Object.assign(obj, {
+              [key]: user[key]
+            })
+          }, {});
+        // return filteredUserData
+      })
+
+      console.log(results);
+      if (allUsersdata != 0) {
+        return res.send({
+          status: 200,
+          message: 'All users data',
+          data: results
+        })
+      } else {
+        return res.send({
+          status: 400,
+          message: 'No users data'
+        })
+      }
+    } catch (error) {
+      console.log("Error getting user data", error);
+      res.send({
+        status: 500,
+        message: 'Error getting all user data',
+      })
+    }
+  },
   //Send OTP   (currently not using)
   sendOtps: async (req, res) => {
     try {
@@ -108,8 +146,8 @@ const authController = {
         error: 'Internal server error'
       });
     }
-  }, 
-  
+  },
+
   // verify OTP (currently not using)
   verifyOtp: async (req, res, next) => {
     try {
@@ -145,5 +183,4 @@ const authController = {
 
 }
 
-
-module.exports =authController ;
+module.exports = authController;

@@ -11,7 +11,7 @@
     "start": "nodemon server.js",
     "start:dev": "cross-env NODE_ENV=dev nodemon server.js",
     "start:prod": "cross-env NODE_ENV=prod nodemon server.js",
-    "start:test": "cross-env NODE_ENV=test nodemon server.js"
+    "start:local": "cross-env NODE_ENV=local nodemon server.js"
   },
   "keywords": [],
   "author": "Manoj",
@@ -32,6 +32,7 @@
     "install": "^0.13.0",
     "jsonwebtoken": "^9.0.2",
     "keycloak-connect": "^25.0.6",
+    "lodash": "^4.17.21",
     "mocha": "^10.7.3",
     "morgan": "^1.10.0",
     "mqtt": "^5.10.1",

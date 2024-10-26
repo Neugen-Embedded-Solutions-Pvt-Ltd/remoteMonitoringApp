@@ -25,14 +25,14 @@ const User = {
             throw new Error('Network timeout Error')
         }
     },
-    
+
     //user login
     findByEmail: async (email) => {
         try {
             console.log(email);
             const sql = 'SELECT * FROM users WHERE email = ?';
             const result = await query(sql, [email]);
-           
+
             return result;
         } catch (e) {
             console.error('Error fetching user by email:', e.message); // More specific error message
@@ -40,7 +40,20 @@ const User = {
         }
 
     },
-
+    // Get All users data
+    GetAllUser: async () => {
+        try {
+            const sql = 'SELECT * FROM users';
+            let response = await query(sql)
+            return response; 
+        } catch (error) {
+            console.log("Error getting user data", error);
+            res.send({
+                status: 500,
+                message: 'Error getting all user data',
+            })
+        }
+    },
     // sent OTP (not implemented)
     sendOTP: async (otpParam) => {
 
@@ -56,7 +69,7 @@ const User = {
         }
     },
 
-     // validate OTP (not implemented)
+    // validate OTP (not implemented)
     validateOtp: async (otpParam) => {
 
         try {

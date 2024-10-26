@@ -121,3 +121,48 @@
  *      500:
  *        description: Server Error
  */
+/**
+ * @swagger
+ * '/auth/alldata':
+ *  get:
+ *     tags:
+ *     - User Controller
+ *     summary: Get all data from users
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - id
+ *              - device_id
+ *              - firstName
+ *              - lastName
+ *              - email
+ *            properties:
+ *              id:
+ *                type: number
+ *                default: 10
+ *              device_id:
+ *                type: number
+ *                default: 10
+ *              firstName:
+ *                type: string
+ *                default: john
+ *              lastName:
+ *                type: string
+ *                default: doe
+ *              email:
+ *                type: string
+ *                default: johndoe@mail.com
+ *     responses:
+ *      200:
+ *        description: successful
+ *      409:
+ *        description: Conflict
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
