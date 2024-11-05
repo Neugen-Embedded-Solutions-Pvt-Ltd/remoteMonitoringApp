@@ -8,17 +8,19 @@ const {
 
 
 const authController = {
+
   // Register user 
   register: async (req, res) => {
     try {
       const {
+        username,
         device_id,
         firstName,
         lastName,
         email,
         password
       } = req.body;
-      let findUser = await User.findByEmail(email); 
+      let findUser = await User.findByUsername(username);
       if (findUser.length != 0) {
         return res.send({
           status: 400,
@@ -26,21 +28,23 @@ const authController = {
         });
       }
       let getDeviceId = await User.getDeviceId(device_id);
-      console.log(getDeviceId)
+
       if (getDeviceId == 0) {
         return res.send({
           status: 400,
           message: 'Device is not registered'
         });
+
       }
-      const hasedPassword = bcrypt.hashSync(password, 8);
+      // const hasedPassword = bcrypt.hashSync(password, 8);
 
       await User.create({
+        username,
         device_id,
         firstName,
         lastName,
         email,
-        password: hasedPassword
+        password
       }); // store details databses
 
       res.status(201).send({
@@ -55,38 +59,42 @@ const authController = {
     }
   },
 
-  // Login user
+  // API for Login
   login: async (req, res) => {
     try {
       const {
-        email,
-        password
+        username
       } = req.body;
 
       // Find user by email
-      const users = await User.findByEmail(email); // login with email
-      if (users.length === 0) return res.status(404).send("User not found.");
+      const users = await User.findByUsername(username); // login with email
+      if (users.length === 0)
+        return res.status(404).send("User not found.");
+      // const user = users[0];
 
-      const user = users[0];
-      const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
+      // const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
 
-      if (!passwordIsValid) return res.status(401).send("Invalid credentials.");
-      console.log(user.id)
-      // Generate JWT
-      const token = jwt.sign({
-        id: user.id
-      }, process.env.JWT_SECRET, {
-        expiresIn: 86400, // 24 hours
-      }); // generate JWT token 
+      // if (!passwordIsValid) return res.status(401).send("Invalid credentials.");
+      // console.log(user.id)
+
+      // // Generate JWT
+      // const token = jwt.sign({
+      //   id: user.id
+      // }, process.env.JWT_SECRET, {
+      //   expiresIn: 86400, // 24 hours
+      // }); // generate JWT token 
 
       res.status(200).send({
         status: 200,
         message: 'User logedin',
-        auth: true,
-        token
+        // auth: true,
+        // token
       });
     } catch (err) {
-      res.status(500).send("Error logging in.");
+      console.log(err)
+      res.status(500).send({
+        message: "Error logging in."
+      });
     }
   },
 
@@ -214,7 +222,7 @@ const authController = {
         error: 'Internal server error'
       });
     }
-  }, 
+  },
 }
 
 module.exports = authController;

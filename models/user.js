@@ -6,24 +6,40 @@ const User = {
     // user registration
     create: async (userData) => {
         try {
-            const insertUserQuery = 'INSERT INTO users (device_id, firstName, lastName, email, password) VALUES(?, ?, ?, ?, ?)';
+            const insertUserQuery = 'INSERT INTO users (username, device_id, firstName, lastName, email, password) VALUES(?, ?, ?, ?, ?, ?)';
             console.log(userData);
             let valuess = Object.values(userData);
             console.log(valuess);
             let result = await query(insertUserQuery, [
+                userData.username,
                 userData.device_id,
                 userData.firstName,
-                userData.lastName,
+                userData.lastName,                
                 userData.email,
                 userData.password
             ])
             return result;
         } catch (e) {
-            console.log(e)
+            console.log('error in query')
             throw new Error('Network timeout Error')
         }
     },
 
+    //user login
+    findByUsername: async (username) => {
+        try {
+            const sql = 'SELECT * FROM users WHERE username = ?';
+            const result = await query(sql, [username]);
+           
+            return result;
+        } catch (e) {
+            console.log('Error fetching user by username:', e.message); // More specific error message
+            throw new Error('Network timeout Error')
+        }
+
+    },
+
+    
     //user login
     findByEmail: async (email) => {
         try {
@@ -46,10 +62,7 @@ const User = {
             return response;
         } catch (error) {
             console.log("Error getting user data", error);
-            res.send({
-                status: 500,
-                message: 'Error getting all user data',
-            })
+            throw new Error('Network timeout Error')
         }
     },
     upadtePassword: async () => {
@@ -59,10 +72,7 @@ const User = {
             return result;
         } catch (error) {
             console.log("Error getting user data", error);
-            res.send({
-                status: 500,
-                message: 'Error getting all user data',
-            })
+            throw new Error('Network timeout Error')
         }
     },
     // sent OTP (not implemented)

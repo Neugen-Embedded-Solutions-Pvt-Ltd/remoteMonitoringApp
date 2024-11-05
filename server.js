@@ -42,6 +42,8 @@ app.get('/', (req, res) => {
     res.send('server is running')
 })
 
-app.listen(process.env.SERVICE_PORT, () => {
+const server  = app.listen(process.env.SERVICE_PORT, () => {
     console.log(`server listening on ${process.env.SERVICE_PORT}`); // hosting port number
 });
+ 
+module.exports = {server , app};
