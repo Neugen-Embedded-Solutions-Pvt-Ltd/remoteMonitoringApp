@@ -1,7 +1,5 @@
 const express = require('express'); //API craetion
 const bodyParser = require('body-parser'); // JSON parser
-const swaggerJSDoc = require("swagger-jsdoc"); // swagger API to JSON
-const swaggerUI = require("swagger-ui-express"); // UI for API endpoints
 const cors = require('cors'); //Cross-Origin Resource Sharing 
 const authRoutes = require('./routes/authRoutes'); // Login middleware
 const dataRoutes = require('./routes/dataRoutes'); // Temprature middleware
@@ -10,9 +8,6 @@ const swaggerDocs = require('./swagger/swagger');
 const {
     verifyToken
 } = require('./middleware/authMiddleware'); // validate API request for particular endpoints after login
-const {
-    handleError
-} = require('./utils/errorHandler'); // middleware error handler
 const {
     limiter
 } = require('./middleware/ratelimit'); // prevent network traffic and bot attacks
@@ -27,12 +22,11 @@ app.use(bodyParser.urlencoded({
 app.use(cors()); // restric the resources sharing globally
 
 const corsOptions = {
-    origin: 'http://localhost:3000', //(https://your-client-app.com)    allowing particular origin 
+    origin: ['http://localhost:3000', 'https://webapp-qrjh.vercel.app/'],//(https://your-client-app.com)    allowing particular origin 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 };
 app.use(cors(corsOptions)); // implementing the cors
-app.use(handleError); // middleware error handler 
 swaggerDocs(app); // Api documentation
 
 app.use('/auth', limiter, authRoutes); // login endpoint

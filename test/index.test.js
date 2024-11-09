@@ -1,5 +1,3 @@
-// to run test case => npm run test
-
 const request = require('supertest');
 const {
     app,
@@ -18,8 +16,16 @@ describe('test api', () => {
     })
 })
 
+// before((done) => {
+//     // Start the server if not already running
+//     app.listen(3002, () => {
+//         if (err) return done(err);
+//         console.log('Server started on port 3000');
+//         done();
+//     });
+// });
+
 describe('test api', () => {
-    // login API testcase
     describe('login API', () => {
         it('should login successfully', (done) => {
             request(server)
@@ -41,8 +47,7 @@ describe('test api', () => {
 
         })
     })
-    // Regiter API testcase
-    describe('Register API', () => {
+    describe('login API', () => {
         it('should register successfully', (done) => {
             request(server)
                 .post('/auth/register')

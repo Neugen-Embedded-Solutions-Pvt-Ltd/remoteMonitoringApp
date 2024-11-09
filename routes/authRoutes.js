@@ -8,8 +8,6 @@ router.post('/register', authController.register); //register the user API endpo
 router.post('/login', authController.login); // login the user API endpoint
 router.get('/alldata', authController.GetAllUsers); // login the user API endpoint
 
-router.post('/sendotp', authController.sendOtps); 
-router.post('/validateotp', authController.verifyOtp); 
 router.get('/weather', weatherApi); // teting purpose
 
 module.exports = router;
