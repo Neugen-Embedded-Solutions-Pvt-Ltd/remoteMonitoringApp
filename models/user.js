@@ -1,6 +1,4 @@
 const query = require('../config/database');
-
-
 // User model for to store in db queries
 const User = {
     // user registration

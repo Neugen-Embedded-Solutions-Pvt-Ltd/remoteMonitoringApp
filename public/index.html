@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Hello world</h2>
+    <form action="" id="forms">
+        <input type="text" name="" id="values">
+        <button type="submit">submit</button>
+    </form>
+    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"
+        integrity="sha384-OoIbkvzsFFQAG88r+IqMAjyOtYDPGO0cqK5HF5Uosdy/zUEGySeAzytENMDynREd"
+        crossorigin="anonymous"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        function randomTemprature(max, min) {
+            return Math.floor(Math.random() * (max - min)) + min;
+        }
+        let valuePass;
+        setInterval(() => {
+            return valuePass = randomTemprature(0, 50);
+
+        }, 5000);
+        var socket = io('http://localhost:3001/');
+        socket.on('connect', (connect) => {
+            console.log('user connected');
+            socket.on('sendname', (msg) => {
+                console.log('message from server:', msg);
+            });
+            // emit temprature signal to server 5 secs once
+            setInterval(() => {
+                valuePass = randomTemprature(0, 50);
+                console.log(valuePass)
+                socket.emit('sendname', valuePass);
+            }, 5000);
+
+        });
+
+        // document.getElementById('forms').addEventListener('submit', (e) => {
+        //     e.preventDefault();
+        //     let inputValue = document.getElementById('values').value;
+        //     socket.emit('sendname',inputValue);
+        //     return false;
+
+        // });
+
+    </script>
+</body>
+
+</html>
