@@ -12,7 +12,6 @@ const teamprature = {
                 tempdata.tempmax,
                 tempdata.conditions,
             ]);
-            console.log(result);
             return result;
         } catch (e) {
             console.log('error in query')
