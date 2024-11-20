@@ -1,7 +1,7 @@
 // reportGenerator.js
-const xl = require('excel4node');
-const path = require('path');
-const fs = require('fs');
+import xl from 'excel4node';
+import path from 'path';
+import fs from 'fs';
 
 async function generateReport(data) {
     try {
@@ -56,4 +56,4 @@ async function generateReport(data) {
     }
 }
 
-module.exports = generateReport;
+export default generateReport;

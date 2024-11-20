@@ -1,12 +1,12 @@
 // configuration for Databases
 
-const mysql = require('mysql');
-const dotenv = require('dotenv');
-const util = require('util');
+import  mysql from 'mysql';
+import  dotenv from 'dotenv';
+import  util from 'util';
 dotenv.config({
     path: `.env.${process.env.NODE_ENV}`
 });
-const tableQueries = require('../schemas/schma');
+import  tableQueries from '../schemas/schma.js';
 
 // create connection to database
 const db = mysql.createConnection({
@@ -37,4 +37,4 @@ db.connect((err) => {
     }
 })();
 
-module.exports = query;
+export default query;

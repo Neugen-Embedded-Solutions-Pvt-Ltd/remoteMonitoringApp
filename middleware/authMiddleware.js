@@ -1,11 +1,11 @@
 // TOken based Authorization
 
-const jwt = require('jsonwebtoken'); // genrate token
+import jwt from 'jsonwebtoken'; // genrate token
 
 // security for API authorization
 function verifyToken(req, res, next) {
-    try { 
-        let token = req.headers.authorization;  // get token from header
+    try {
+        let token = req.headers.authorization; // get token from header
         if (!token) return res.status(403).send({
             auth: false,
             message: 'token not provided'
@@ -17,7 +17,7 @@ function verifyToken(req, res, next) {
         }); //if not authorized not allowed
 
         req.user = verfiedUser;
-        next(); 
+        next();
     } catch (err) {
         console.error(err);
         res.status(400).send({
@@ -26,6 +26,4 @@ function verifyToken(req, res, next) {
     }
 };
 
-module.exports = {
-    verifyToken
-};
+export default verifyToken;

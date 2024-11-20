@@ -32,5 +32,4 @@ class AutoTemprature {
     }
 }
 
- 
-module.exports = AutoTemprature;
+export default AutoTemprature;

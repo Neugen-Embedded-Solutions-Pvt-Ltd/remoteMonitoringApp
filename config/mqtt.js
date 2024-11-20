@@ -1,5 +1,5 @@
 // configuration for MQTT broker
-const mqtt = require('mqtt');
+import mqtt from 'mqtt';
 
 const host = 'broker.hivemq.com';
 const port = '1883'
@@ -19,4 +19,4 @@ mqttClient.on('connect', () => {
 //   console.error('Connection error:', error);
 // });
 
-module.exports = mqttClient;
+export default mqttClient;

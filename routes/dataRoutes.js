@@ -1,10 +1,11 @@
-const express = require('express');
-const router = express.Router();
-const tempratureController = require('../controllers/tempratureController');
-const tempController = require('../controllers/tempAllData');
+import express from 'express';
 
-router.post('/roomtemp', tempratureController.setAutomaticTemprature); // temparture end-point
-router.post('/tempall', tempController.getTempratureAllData); // temparture report genration
-router.get('/temp', tempController.tempratureData); // all tempratur data for chart
+const dataRouter = express.Router();
+import tempratureController from '../controllers/tempratureController.js';
+import tempController from '../controllers/tempAllData.js';
+ 
+// dataRouter.post('/roomtemp', tempratureController.setAutomaticTemprature); // temparture end-point
+dataRouter.post('/tempall', tempController.getTempratureAllData); // temparture report genration
+dataRouter.get('/temp', tempController.tempratureData); // all tempratur data for chart
 
-module.exports = router
+export default  dataRouter;

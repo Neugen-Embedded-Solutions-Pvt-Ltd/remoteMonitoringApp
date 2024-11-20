@@ -1,59 +1,60 @@
-const express = require('express'); //API craetion
-const bodyParser = require('body-parser'); // JSON parser
-const cors = require('cors'); //Cross-Origin Resource Sharing 
-const authRoutes = require('./routes/authRoutes'); // Login middleware
-const dataRoutes = require('./routes/dataRoutes'); // Temprature middleware
-const setupMiddleware = require('./logging/logger'); // logging in terminal
-const swaggerDocs = require('./swagger/swagger');
-const {
-    verifyToken
-} = require('./middleware/authMiddleware'); // validate API request for particular endpoints after login
-const {
-    limiter
-} = require('./middleware/ratelimit'); // prevent network traffic and bot attacks
-require('./config/mqtt'); // establish MQTT connection
-const http = require('http');
-const app = express(); // initilize express
+import express from 'express'; //API creation
+import bodyParser from 'body-parser'; // JSON parser
+import cors from 'cors'; //Cross-Origin Resource Sharing 
+import path from 'path';
+import http from 'http';
+import {
+    Server
+} from 'socket.io';
+import {
+    fileURLToPath
+} from 'url';
 
+import './config/mqtt.js'; // establish MQTT connection
+
+import router from './routes/authRoutes.js'; // Login middleware
+import dataRouter from './routes/dataRoutes.js'; // Temprature middleware
+import setupMiddleware from './logging/logger.js'; // logging in terminal
+import swaggerDocs from './swagger/swagger.js';
+import verifyToken from './middleware/authMiddleware.js'; // validate API request for particular endpoints after login
+import limiter from './middleware/ratelimit.js'; // prevent network traffic and bot attacks
+
+const app = express(); // initilize express
 const server = http.createServer(app);
-app.use(cors()); // restric the resources sharing globally
+const __dirname = path.dirname(fileURLToPath(
+    import.meta.url));
 
 const corsOptions = {
-    origin: ['http://localhost:3000', 'https://webapp-qrjh.vercel.app/'], //(https://your-client-app.com)    allowing particular origin 
+    origin: '*', //(https://your-client-app.com)    allowing particular origin 
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 };
-
-const io = require('socket.io')(server, {
+const io = new Server(server, {
     cors: corsOptions
 });
 
-const path = require('path')
-
 setupMiddleware(app); // logging in console
+swaggerDocs(app); // Api documentation
+
+app.use(cors()); // restric the resources sharing globally
 app.use(express.json()); // middileware data in the json format
 app.use(bodyParser.json()); // parses json data
 app.use(bodyParser.urlencoded({
     extended: false
 })); // parse URL encoded form data -> avalible in req.body
-
-swaggerDocs(app); // Api documentation
-
-app.use('/auth', limiter, authRoutes); // login endpoint
-app.use('/api', verifyToken, authRoutes); // authorized end-points 
-app.use('/iot', dataRoutes); // temprature end-points
-app.get('/', (req, res) => {
-    res.send('server is running')
-})
 app.use(express.static(path.join(__dirname, "public")));
-server.listen(process.env.SERVICE_PORT, () => {
-    console.log(`server listening on ${process.env.SERVICE_PORT}`); // hosting port number
-});
 
-
+// enpoints
+app.use('/auth', limiter, router); // login endpoint
+app.use('/api', verifyToken, router); // authorized end-points 
+app.use('/iot', dataRouter); // temprature end-points
+app.get('/', (req, res) => {
+    res.send('server is running');
+})
 app.get('/w', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
+
 io.on('connection', (client) => {
     console.log('User Connected');
     client.on('sendname', (msg) => {
@@ -65,7 +66,13 @@ io.on('connection', (client) => {
     });
 })
 
-module.exports = {
+server.listen(process.env.SERVICE_PORT, () => {
+    console.log(`server listening on ${process.env.SERVICE_PORT}`); // hosting port number
+});
+
+
+
+export default {
     server,
-    app,
+    app
 };

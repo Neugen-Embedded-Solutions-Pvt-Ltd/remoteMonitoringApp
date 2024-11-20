@@ -1,4 +1,4 @@
-const query = require('../config/database');
+import query  from '../config/database.js';
 
 const teamprature = {
     // insert global temprature to the database
@@ -32,4 +32,4 @@ const teamprature = {
     }
 }
 
-module.exports = teamprature;
+export default teamprature;

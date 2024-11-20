@@ -1,4 +1,4 @@
-const query = require('../config/database');
+import query from '../config/database.js';
 // User model for to store in db queries
 const User = {
     // user registration
@@ -59,4 +59,4 @@ const User = {
     }
 }
 
-module.exports = User;
+export default User;

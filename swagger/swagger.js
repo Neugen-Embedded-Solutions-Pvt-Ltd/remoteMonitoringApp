@@ -1,5 +1,5 @@
-let swaggerJsdoc= require('swagger-jsdoc')
-let swaggerUi = require('swagger-ui-express');
+import swaggerJsdoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 const options = {
   definition: {
     openapi: '3.0.0',
@@ -37,4 +37,4 @@ function swaggerDocs(app) {
     res.send(swaggerSpec)
   })
 }
-module.exports = swaggerDocs;
+export default swaggerDocs;

@@ -1,8 +1,8 @@
 // logs of server activity 
 
-const morgan = require("morgan");
-const helmet = require("helmet");
-const compression = require("compression");
+import morgan from "morgan";
+import helmet from "helmet";
+import compression from "compression";
 
 // security header in API requests
 function setupMiddleware(app) {
@@ -20,4 +20,4 @@ function setupMiddleware(app) {
 }
 
 // Export the middleware setup function
-module.exports = setupMiddleware;
+export default setupMiddleware;

@@ -1,4 +1,4 @@
-const User = require('../models/user');
+import User from '../models/user.js';
 
 const authController = {
 
@@ -112,4 +112,4 @@ const authController = {
 
 }
 
-module.exports = authController;
+export default authController;

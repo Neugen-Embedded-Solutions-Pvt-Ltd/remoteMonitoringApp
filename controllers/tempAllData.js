@@ -1,9 +1,9 @@
-const temprature = require('../models/temprature');
-const generateReport = require('../utils/reportGenerator');
-const {
-    weatherApiData
-} = require('../utils/reportGenerator');
-const fs = require('fs');
+import fs from 'fs';
+
+import temprature from '../models/temprature.js';
+import generateReport from '../utils/reportGenerator.js';
+import weatherApiData from '../controllers/tempratureController.js';
+
 
 const tempController = {
     // Report generator
@@ -86,4 +86,4 @@ const tempController = {
     }
 }
 
-module.exports = tempController;
+export default tempController;

@@ -1,20 +1,19 @@
-const AutoTemprature = require('../services/tempratureService'); // basic information of temprature 
-const dotenv = require('dotenv');
-const {
+import dotenv from 'dotenv';
+import {
     promisify
-} = require('util'); // Promise to async function
+} from 'util'; // Promise to async function
 dotenv.config();
-const mqttClient = require('../config/mqtt'); // importing mqtt configuration
+
+import mqttClient from '../config/mqtt.js'; // importing mqtt configuration
+import AutoTemprature from '../services/tempratureService.js'; // basic information of temprature 
 
 const subscribeAsync = promisify(mqttClient.subscribe).bind(mqttClient); // using in async instead of PROMISE
 const publishAsync = promisify(mqttClient.publish).bind(mqttClient);
 
 const BASEURI = process.env.WEATHER_API_URI;
 const weatherKey = process.env.WEATHER_API_KEY;
-
 const cityWeather = "india"
 let currentTemperature;
-// Variable to store the last sent temperature value
 let lastTemperature = null;
 
 // getting todays's weather details
@@ -79,7 +78,7 @@ mqttClient.on('message', (topic, message) => {
 });
 
 // end-point for user view and send temperature
-exports.setAutomaticTemprature = async (req, res) => {
+const setAutomaticTemprature = async (req, res) => {
     try {
         const {
             typeTemprature,
@@ -110,17 +109,19 @@ exports.setAutomaticTemprature = async (req, res) => {
     }
 };
 
-exports.weatherApiData = async () => {
+const weatherApiData = async () => {
     const weatherUrls = 'http://api.weatherapi.com/v1/forecast.json?key=877c85b3db6c4a4c997165011241211&q=bangalore&days=10&aqi=no&alerts=no'; // Replace with your actual weather API URL
     try {
         const resp = await fetch(weatherUrls);
         if (!resp.ok) {
             throw new Error(`Failed to get weather data ${resp.status}`);
         }
-        const data = await resp.json(); 
+        const data = await resp.json();
         return data;
     } catch (error) {
         console.error("Error fetching weather data: ", error);
         throw error
     }
 };
+
+export default weatherApiData;
