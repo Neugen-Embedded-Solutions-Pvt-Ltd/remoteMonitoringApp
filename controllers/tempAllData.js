@@ -2,7 +2,7 @@ import fs from 'fs';
 
 import temprature from '../models/temprature.js';
 import generateReport from '../utils/reportGenerator.js';
-import weatherApiData from '../controllers/tempratureController.js';
+import weatherApiData from '../utils/weatherApi.js';
 
 
 const tempController = {
@@ -41,39 +41,15 @@ const tempController = {
     },
     // getting all temperature data from DB
     tempratureData: async (req, res) => {
-        try {
-            let weatherData = await weatherApiData();
-            let weatherAllData = weatherData.forecast.forecastday;
-
-            // Extract today's weather data
-            let weatherDatas = weatherAllData[0];
-
-            let todayData = {
-                date: weatherDatas.date,
-                temp: weatherDatas.day.avgtemp_f,
-                tempmax: weatherDatas.day.maxtemp_f,
-                tempmin: weatherDatas.day.mintemp_f,
-                conditions: weatherDatas.day.condition.text
-            };
-
-            //Map all forcast data
-            const weatherDataArray = weatherAllData.map(data => ({
-                date: data.date,
-                temp: data.day.avgtemp_f,
-                tempmax: data.day.maxtemp_f,
-                tempmin: data.day.mintemp_f,
-                conditions: data.day.condition.text
-            }));
-
+        try { 
             // Save today's forecast data yo DB
-            const result = await temprature.createTempratureEntry(todayData);
+            const result = await temprature.getTempratureAll();
 
             res.status(200).send({
                 status: 200,
                 message: 'success',
-                dataupdate: 'date inserted',
-                queryData: result,
-                data: weatherDataArray,
+                dataupdate: 'date inserted', 
+                data: result,
             });
         } catch (error) {
             console.error('Error in tempratureData:', error);
@@ -83,7 +59,53 @@ const tempController = {
                 error: error.message
             });
         }
-    }
+    },
+    deviceTempData: async (req, res) => {
+        try {
+            let result = await temprature.getTemperatureData();
+            if (result.length == 0) {
+                return res.send({
+                    status: 400,
+                    message: 'temprature not found'
+                });
+            }
+            res.status(200).send({
+                status: 200,
+                message: 'success',
+                data: result,
+            });
+        } catch (err) {
+            console.error('Error in tempratureData:', err);
+            res.status(500).json({
+                status: 500,
+                message: 'Failed to process weather data',
+                err: err.message
+            });
+        }
+    },
+    insertTodayTemp: async (req, res) => {
+        try {
+            let todayDate = req;
+            let weatherData = await weatherApiData();
+            let weatherAllData = weatherData.forecast.forecastday;
+
+            // Extract today's weather data
+            let weatherDatas = weatherAllData[0];
+            let todayData = {
+                date: weatherDatas.date,
+                temp: weatherDatas.day.avgtemp_f,
+                tempmax: weatherDatas.day.maxtemp_f,
+                tempmin: weatherDatas.day.mintemp_f,
+                conditions: weatherDatas.day.condition.text
+            };
+
+            // Save today's forecast data yo DB
+            await temprature.createTempratureEntry(todayData);
+ 
+        } catch (error) {
+            console.error('Error in tempratureData:', error);
+        }
+    },
 }
 
 export default tempController;

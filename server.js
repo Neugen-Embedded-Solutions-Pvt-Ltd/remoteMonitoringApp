@@ -18,7 +18,7 @@ import setupMiddleware from './logging/logger.js'; // logging in terminal
 import swaggerDocs from './swagger/swagger.js';
 import verifyToken from './middleware/authMiddleware.js'; // validate API request for particular endpoints after login
 import limiter from './middleware/ratelimit.js'; // prevent network traffic and bot attacks
-
+import temperature from './models/temprature.js'
 const app = express(); // initilize express
 const server = http.createServer(app);
 const __dirname = path.dirname(fileURLToPath(
@@ -47,30 +47,36 @@ app.use(express.static(path.join(__dirname, "public")));
 // enpoints
 app.use('/auth', limiter, router); // login endpoint
 app.use('/api', verifyToken, router); // authorized end-points 
-app.use('/iot', dataRouter); // temprature end-points
+app.use('/iot', dataRouter); // temprature end-points 
 app.get('/', (req, res) => {
     res.send('server is running');
 })
-app.get('/w', function (req, res) {
+app.get('/', function (req, res) {
     res.sendFile(__dirname + '/public/index.html');
 });
 
-io.on('connection', (client) => {
-    console.log('User Connected');
-    client.on('sendname', (msg) => {
-        console.log('Temprature received:', msg)
+// Create a Socket connection
+io.on('connection', (socket) => {
+    console.log('User Connected', socket.id);
+    
+    socket.on('device temperature', async (tempratureData) => {
+        await temperature.insertTempratureData(tempratureData); // inserting temperatureF into DB
+        tempratureData.id = socket.id; // Add socket ID
+        console.log('temperature updated in the DB:', tempratureData);
+
+        // Emit back the response to client
+        io.emit('temperature to client', tempratureData);
     });
-    client.emit('sendname', "Hello from server")
-    client.on('disconnect', function () {
+
+    // socket got disconnected
+    socket.on('disconnect', function () {
         console.log('user disconnected');
     });
-})
+});
 
 server.listen(process.env.SERVICE_PORT, () => {
     console.log(`server listening on ${process.env.SERVICE_PORT}`); // hosting port number
 });
-
-
 
 export default {
     server,

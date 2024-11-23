@@ -20,34 +20,25 @@
     <script>
         function randomTemprature(max, min) {
             return Math.floor(Math.random() * (max - min)) + min;
-        }
-        let valuePass;
-        setInterval(() => {
-            return valuePass = randomTemprature(0, 50);
-
-        }, 5000);
+        };
         var socket = io('http://localhost:3001/');
         socket.on('connect', (connect) => {
-            console.log('user connected');
-            socket.on('sendname', (msg) => {
-                console.log('message from server:', msg);
+            console.log('user connected',socket.id);
+            socket.on('device temperature', (tempratureData) => {
+                console.log('message from server:', tempratureData);
             });
             // emit temprature signal to server 5 secs once
             setInterval(() => {
-                valuePass = randomTemprature(0, 50);
-                console.log(valuePass)
-                socket.emit('sendname', valuePass);
+                let valuePass = randomTemprature(0, 50);
+                let UserTempData = {
+                    device_id: 2,
+                    temperature: valuePass
+                };
+                console.log(UserTempData);
+                socket.emit('device temperature', UserTempData);
             }, 5000);
 
-        });
-
-        // document.getElementById('forms').addEventListener('submit', (e) => {
-        //     e.preventDefault();
-        //     let inputValue = document.getElementById('values').value;
-        //     socket.emit('sendname',inputValue);
-        //     return false;
-
-        // });
+        }); 
 
     </script>
 </body>
