@@ -13,17 +13,17 @@
         <input type="text" name="" id="values">
         <button type="submit">submit</button>
     </form>
-    <script src="https://cdn.socket.io/4.8.0/socket.io.min.js"
-        integrity="sha384-OoIbkvzsFFQAG88r+IqMAjyOtYDPGO0cqK5HF5Uosdy/zUEGySeAzytENMDynREd"
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"
+        integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+"
         crossorigin="anonymous"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
         function randomTemprature(max, min) {
             return Math.floor(Math.random() * (max - min)) + min;
         };
-        var socket = io('http://localhost:3001/');
+        let socket = io('http://localhost:3001/');
         socket.on('connect', (connect) => {
-            console.log('user connected',socket.id);
+            console.log('user connected', socket.id);
             socket.on('device temperature', (tempratureData) => {
                 console.log('message from server:', tempratureData);
             });
@@ -36,9 +36,9 @@
                 };
                 console.log(UserTempData);
                 socket.emit('device temperature', UserTempData);
-            }, 5000);
+            }, 1000000);
 
-        }); 
+        });
 
     </script>
 </body>

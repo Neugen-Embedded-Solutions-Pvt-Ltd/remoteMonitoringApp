@@ -10,7 +10,7 @@ function setupMiddleware(app) {
     app.use(morgan('combined'));
 
     // Helmet for security headers
-    // app.use(helmet());
+    app.use(helmet());
 
     // Compression for response compression
     // app.use(compression());
