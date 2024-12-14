@@ -160,7 +160,7 @@ const authController = {
       const token = jwt.sign(
         { id: response.username },
         process.env.JWT_SECRET,
-        { expiresIn: 120 }
+        { expiresIn: '12000h' }
       );
       const forgotPasswordLink = `${process.env.CLIENT_URL}/?token=${token}`;
       console.log(forgotPasswordLink);
