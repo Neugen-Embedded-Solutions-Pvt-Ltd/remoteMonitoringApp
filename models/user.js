@@ -37,9 +37,9 @@ const User = {
       } else {
         return result; // More specific error message
       }
-      //   return result;
     } catch (e) {
       console.log("Error fetching user by username:", e.message); // More specific error message
+      console.error("Detailed error:", e);
       throw new Error("Network timeout Error");
     }
   },
@@ -55,12 +55,44 @@ const User = {
     }
   },
 
+  // get Devive id is registered
   getDeviceId: async (device_id) => {
     try {
       const sql = "SELECT device_id FROM devices WHERE device_id = ?";
       const result = await query(sql, [device_id]);
       return result;
     } catch (e) {}
+  },
+
+  // Reset password
+  updatePassword: async (userinfo) => {
+    try {
+      const sql = "UPDATE users SET password = ? WHERE username= ?";
+      const result = await query(sql, [userinfo.password, userinfo.username]);
+      return result;
+    } catch (error) {
+      console.log("error in query");
+      throw new Error("Network timeout Error");
+    }
+  },
+
+  //find user by email
+  findByemail: async (email) => {
+    try {
+      //json_object('email', email) FROM users;
+      const sql = "SELECT * FROM users WHERE email = ?";
+      const result = await query(sql, [email]);
+      // Check if a user was found and return the first result
+      if (result.length > 0) {
+        return result[0]; // Return the first user object
+      } else {
+        return result; // More specific error message
+      }
+      //   return result;
+    } catch (e) {
+      console.log("Error fetching user by email:", e.message); // More specific error message
+      throw new Error("Network timeout Error");
+    }
   },
 };
 

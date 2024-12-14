@@ -1,15 +1,16 @@
-// weather API
-exports.weatherApiData = async () => {
-    const weatherUrls = 'http://api.weatherapi.com/v1/forecast.json?key=877c85b3db6c4a4c997165011241211&q=bangalore&days=10&aqi=no&alerts=no'; // Replace with your actual weather API URL
+import jwt from "jsonwebtoken";
+
+const Helpers = {
+  // Token validation
+  tokenValidate: async (token) => {
     try {
-        const resp = await fetch(weatherUrls);
-        if (!resp.ok) {
-            throw new Error(`Failed to get weather data ${resp.status}`);
-        }
-        const data = await resp.json();
-        return data;
+      const result = jwt.verify(token, process.env.JWT_SECRET);
+
+      return result;
     } catch (error) {
-        console.error("Error fetching weather data: ", error);
-        throw error
+      return false;
     }
+  },
 };
+
+export default Helpers;

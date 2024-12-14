@@ -18,10 +18,11 @@
  *              - lastName
  *              - email
  *              - password
+ *              - username
  *            properties:
  *              device_id:
  *                type: number
- *                default: 10
+ *                default: 1
  *              firstName:
  *                type: string
  *                default: john
@@ -34,19 +35,21 @@
  *              password:
  *                type: string
  *                default: johnDoe20!@
+ *              username:
+ *                type: string
+ *                default: Jhon
  *     responses:
  *      201:
- *        description: Created
+ *        description: User created successfully
  *      409:
- *        description: Conflict
+ *        description: User already exist
  *      404:
- *        description: Not Found
+ *        description: Device is not registered
  *      500:
  *        description: Server Error
  */
 
 /** Login */
-
 /**
  * @swagger
  * '/auth/login':
@@ -61,73 +64,62 @@
  *           schema:
  *            type: object
  *            required:
- *              - device_id
- *              - email
+ *              - username
  *              - password
  *            properties:
- *              device_id:
- *                type: number
- *                default: 10
- *              email:
+ *              username:
  *                type: string
- *                default: johndoe@mail.com
+ *                default: manoj
  *              password:
  *                type: string
- *                default: johnDoe20!@
+ *                default: manoj20!@
  *     responses:
  *      200:
  *        description: "User logged in successfully"
- *      409:
- *        description: Conflict
+ *      403:
+ *        description: Invalid credentials.
  *      400:
- *        description: "Bad request"
+ *        description: Bad request
  *      404:
- *        description: Not Found
+ *        description: User not found
  *      500:
  *        description: Server Error
  */
 
-/** Temprature */
-/**
- * @swagger
- * '/iot/roomtemp':
- *  post:
- *     tags:
- *     - User Controller
- *     summary: Setup the temprature
- *     requestBody:
- *      required: true
- *      content:
- *        application/json:
- *           schema:
- *            type: object
- *            required:
- *              - typeTemprature
- *              - manualTemparature
- *            properties:
- *              typeTemprature:
- *                type: string
- *                default: slightlyChilled
- *              manualTemparature:
- *                type: number
- *                default: 16
- *     responses:
- *      200:
- *        description: Temprature setup successfully
- *      409:
- *        description: Conflict
- *      404:
- *        description: Not Found
- *      500:
- *        description: Server Error
- */
+/** get all users data */
 /**
  * @swagger
  * '/auth/alldata':
  *  get:
  *     tags:
  *     - User Controller
- *     summary: Get all data from users
+ *     summary: All users data
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *     responses:
+ *      200:
+ *        description: All users data
+ *      400:
+ *        description: No users data
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+
+
+/** Forgot Password */
+/**
+ * @swagger
+ * '/auth/forgotpassword':
+ *  post:
+ *     tags:
+ *     - User Controller
+ *     summary: Generate link for reset password
  *     requestBody:
  *      required: true
  *      content:
@@ -135,32 +127,52 @@
  *           schema:
  *            type: object
  *            required:
- *              - id
- *              - device_id
- *              - firstName
- *              - lastName
- *              - email
+ *              - username
  *            properties:
- *              id:
- *                type: number
- *                default: 10
- *              device_id:
- *                type: number
- *                default: 10
- *              firstName:
- *                type: string
- *                default: john
- *              lastName:
- *                type: string
- *                default: doe
- *              email:
- *                type: string
- *                default: johndoe@mail.com
+ *              username:
+ *                type: text
+ *                default: a
  *     responses:
  *      200:
- *        description: successful
+ *        description: reset password link sent to your email
  *      409:
- *        description: Conflict
+ *        description: User not found, create new account
+ *      404:
+ *        description: Not Found
+ *      500:
+ *        description: Server Error
+ */
+
+/** Reset Password */
+/**
+ * @swagger
+ * '/auth/resetpassword':
+ *  put:
+ *     tags:
+ *     - User Controller
+ *     summary: Reset password from email link
+ *     requestBody:
+ *      required: true
+ *      content:
+ *        application/json:
+ *           schema:
+ *            type: object
+ *            required:
+ *              - password
+ *            properties:
+ *              password:
+ *                type: password
+ *                default: 12
+ *              token:
+ *                type: string
+ *                default: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IndxIiwiaWF0IjoxNzMzODQyODkxLCJleHAiOjE3MzM5MjkyOTF9.W6LMP82XWFFqvqL5IMHecbiyQMQpom0iqpU4YPrPaKA
+ *     responses:
+ *      200:
+ *        description: Password updated successfully
+ *      403:
+ *        description: Invalid token
+ *      409:
+ *        description: User not found, create new account
  *      404:
  *        description: Not Found
  *      500:

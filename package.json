@@ -7,7 +7,7 @@
     "test": "mocha"
   },
   "scripts": {
-    "test": "cross-env NODE_ENV=local mocha test/**/*.test.js --recursive --exit",
+    "test": "cross-env NODE_ENV=dev mocha test/**/*.test.js --recursive --exit",
     "swagger-autogen": "node ./docs/swagger.js",
     "start": "cross-env NODE_ENV=local nodemon server.js",
     "start:dev": "cross-env NODE_ENV=dev nodemon server.js",

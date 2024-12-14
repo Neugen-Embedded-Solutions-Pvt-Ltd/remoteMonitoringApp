@@ -1,6 +1,9 @@
 import User from "../models/user.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
+import { sendEmail } from "../config/emailConfigure.js";
+import Helpers from "../utils/helpers.js";
+
 const authController = {
   // Register user
   register: async (req, res) => {
@@ -24,7 +27,7 @@ const authController = {
       let getDeviceId = await User.getDeviceId(device_id);
 
       if (getDeviceId == 0) {
-        return res.status(401).send({
+        return res.status(404).send({
           status: 404,
           message: "Device is not registered",
         });
@@ -49,7 +52,7 @@ const authController = {
         }
       ); // generate JWT token
       res.status(201).send({
-        status: 200,
+        status: 201,
         message: "user created successfully",
         token: token,
       });
@@ -76,8 +79,8 @@ const authController = {
       const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
       if (!passwordIsValid)
         return res
-          .status(401)
-          .send({ status: 401, message: "Invalid credentials." });
+          .status(403)
+          .send({ status: 403, message: "Invalid credentials." });
 
       const token = jwt.sign(
         {
@@ -90,7 +93,7 @@ const authController = {
       ); // generate JWT token
       res.status(200).send({
         status: 200,
-        message: "User logedin",
+        message: "User logged in successfully",
         auth: true,
         token,
       });
@@ -101,7 +104,6 @@ const authController = {
       });
     }
   },
-
   // Get All users data
   GetAllUsers: async (req, res) => {
     try {
@@ -134,6 +136,84 @@ const authController = {
       res.send({
         status: 500,
         message: "Error getting all user data",
+      });
+    }
+  },
+
+  // forgot Password genrating link and providing to Client
+  forgotPassword: async (req, res) => {
+    try {
+      const { username, email } = req.body;
+      let response;
+      if (email) {
+        response = await User.findByemail(email);
+      } else {
+        response = await User.findByUsername(username);
+      }
+      console.log(response);
+      if (response.length === 0) {
+        return res.status(409).send({
+          status: 409,
+          message: "User not found, create new account",
+        });
+      }
+      const token = jwt.sign(
+        { id: response.username },
+        process.env.JWT_SECRET,
+        { expiresIn: 120 }
+      );
+      const forgotPasswordLink = `${process.env.CLIENT_URL}/?token=${token}`;
+      console.log(forgotPasswordLink);
+      let options = {
+        to: response.email,
+        subject: "Password Reset Link",
+        message: `<h2>Your Link for reset password <a href='${forgotPasswordLink}' target="_blank"'>reset password</a> </h2>`,
+      };
+      console.log(options);
+      await sendEmail(options); // email template for share reset password link
+      return res.status(200).send({
+        status: 200,
+        message: "reset password link sent to your email",
+        token: token,
+        link: forgotPasswordLink
+      });
+    } catch (error) {
+      console.log(error);
+      res.status(500).send({
+        status: 500,
+        message: "Error updating password",
+      });
+    }
+  },
+
+  // update password from Email
+  resetPassword: async (req, res) => {
+    try {
+      const { token, password } = req.body;
+
+      const result = await Helpers.tokenValidate(token);
+      console.log(result);
+      if (!result) {
+        return res.status(403).send({
+          status: 403,
+          message: "Invalid token or expired token",
+        });
+      }
+
+      let options = {
+        username: result.id,
+        password: bcrypt.hashSync(password, 8),
+      };
+
+      await User.updatePassword(options);
+      return res.status(200).send({
+        status: 200,
+        message: "Password updated successfully",
+      });
+    } catch (error) {
+      res.status(500).send({
+        status: 500,
+        message: "Error updating password",
       });
     }
   },
