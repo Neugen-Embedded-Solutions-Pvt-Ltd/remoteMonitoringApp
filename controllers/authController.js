@@ -6,12 +6,12 @@ import Helpers from "../utils/helpers.js";
 
 const authController = {
   // Register user
-  register: async (req, res) => {
+  registerUser: async (req, res) => {
     try {
       const { username, device_id, firstName, lastName, email, password } =
         req.body;
 
-      let findUser = await User.findByUsername(username);
+      let findUser = await User.findUserByUsername(username);
       // if (findUser.length == 0) {
       //   return res.send({
       //     status: 400,
@@ -24,7 +24,7 @@ const authController = {
           message: "User already exist",
         });
       }
-      let getDeviceId = await User.getDeviceId(device_id);
+      let getDeviceId = await User.fetchDeviceById(device_id);
 
       if (getDeviceId == 0) {
         return res.status(404).send({
@@ -33,7 +33,7 @@ const authController = {
         });
       }
       const hasedPassword = bcrypt.hashSync(password, 8);
-      await User.create({
+      await User.insertNewUser({
         username,
         device_id,
         firstName,
@@ -65,12 +65,12 @@ const authController = {
   },
 
   // API for Login
-  login: async (req, res) => {
+  loginUser: async (req, res) => {
     try {
       const { username, password } = req.body;
 
       // Find user by username
-      const user = await User.findByUsername(username); // login with email
+      const user = await User.findUserByUsername(username); // login with email
       if (user.length === 0)
         return res.status(404).send({
           status: 404,
@@ -91,10 +91,15 @@ const authController = {
           expiresIn: 86400, // 24 hours
         }
       ); // generate JWT token
+      // delete (user.password); //
+ 
+      console.log(user)
+
       res.status(200).send({
         status: 200,
         message: "User logged in successfully",
         auth: true,
+        data: user,
         token,
       });
     } catch (err) {
@@ -105,9 +110,9 @@ const authController = {
     }
   },
   // Get All users data
-  GetAllUsers: async (req, res) => {
+  fetchAllUsers: async (req, res) => {
     try {
-      let allUsersdata = await User.GetAllUser();
+      let allUsersdata = await User.fetchAllUsers();
       // remove password from user object
       const results = allUsersdata.map((user) => {
         return Object.keys(user)
@@ -141,14 +146,14 @@ const authController = {
   },
 
   // forgot Password genrating link and providing to Client
-  forgotPassword: async (req, res) => {
+  sendPasswordResetLink: async (req, res) => {
     try {
       const { username, email } = req.body;
       let response;
       if (email) {
-        response = await User.findByemail(email);
+        response = await User.findUserByEmail(email);
       } else {
-        response = await User.findByUsername(username);
+        response = await User.findUserByUsername(username);
       }
       console.log(response);
       if (response.length === 0) {
@@ -160,7 +165,7 @@ const authController = {
       const token = jwt.sign(
         { id: response.username },
         process.env.JWT_SECRET,
-        { expiresIn: '12000h' }
+        { expiresIn: 120 }
       );
       const forgotPasswordLink = `${process.env.CLIENT_URL}/?token=${token}`;
       console.log(forgotPasswordLink);
@@ -187,7 +192,7 @@ const authController = {
   },
 
   // update password from Email
-  resetPassword: async (req, res) => {
+  resetPasswordWithToken: async (req, res) => {
     try {
       const { token, password } = req.body;
 
@@ -205,7 +210,7 @@ const authController = {
         password: bcrypt.hashSync(password, 8),
       };
 
-      await User.updatePassword(options);
+      await User.updateUserPassword(options);
       return res.status(200).send({
         status: 200,
         message: "Password updated successfully",

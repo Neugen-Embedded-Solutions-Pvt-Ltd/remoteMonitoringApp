@@ -2,7 +2,7 @@ import query from "../config/database.js";
 // User model for to store in db queries
 const User = {
   // user registration
-  create: async (userData) => {
+  insertNewUser: async (userData) => {
     try {
       const insertUserQuery =
         "INSERT INTO users (username, device_id, firstName, lastName, email, password) VALUES(?, ?, ?, ?, ?, ?)";
@@ -26,7 +26,7 @@ const User = {
   },
 
   //user login
-  findByUsername: async (username) => {
+  findUserByUsername: async (username) => {
     try {
       //json_object('username', username) FROM users;
       const sql = "SELECT * FROM users WHERE username = ?";
@@ -44,7 +44,7 @@ const User = {
     }
   },
   // Get All users data
-  GetAllUser: async () => {
+  fetchAllUsers: async () => {
     try {
       const sql = "SELECT * FROM users";
       let response = await query(sql);
@@ -56,7 +56,7 @@ const User = {
   },
 
   // get Devive id is registered
-  getDeviceId: async (device_id) => {
+  fetchDeviceById: async (device_id) => {
     try {
       const sql = "SELECT device_id FROM devices WHERE device_id = ?";
       const result = await query(sql, [device_id]);
@@ -65,7 +65,7 @@ const User = {
   },
 
   // Reset password
-  updatePassword: async (userinfo) => {
+  updateUserPassword: async (userinfo) => {
     try {
       const sql = "UPDATE users SET password = ? WHERE username= ?";
       const result = await query(sql, [userinfo.password, userinfo.username]);
@@ -77,7 +77,7 @@ const User = {
   },
 
   //find user by email
-  findByemail: async (email) => {
+  findUserByEmail: async (email) => {
     try {
       //json_object('email', email) FROM users;
       const sql = "SELECT * FROM users WHERE email = ?";

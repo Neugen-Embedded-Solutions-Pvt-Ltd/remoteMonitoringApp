@@ -95,7 +95,7 @@ io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
 
   socket.on("device temperature", async (tempratureData) => {
-    await temperature.insertTempratureData(tempratureData); // inserting temperatureF into DB
+    await temperature.insertDeviceTemprature(tempratureData); // inserting temperatureF into DB
     tempratureData.id = socket.id; // Add socket ID
     console.log("temperature updated in the DB:", tempratureData);
 
@@ -108,7 +108,21 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
+// function generateTodayDataAndSave() {
+//   const today = new Date().toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
 
+//   const todayData = {
+//     date: today,
+//     temp: 10,
+//     tempmax: 10,
+//     tempmin: 10,
+//     conditions: 'cool',
+//   };
+
+//   temprature.insertTemperatureRecord(todayData);
+// }
+// Call the function every minute
+// setInterval(generateTodayDataAndSave, 60 * 1000);
 // server listening
 server.listen(process.env.SERVICE_PORT, () => {
   console.log(`cloud server listening on ${process.env.SERVICE_PORT}`); // hosting port number
@@ -118,5 +132,9 @@ server.listen(process.env.SERVICE_PORT, () => {
 server.on("error", (error) => {
   console.error("Server error:", error);
 });
+
+
+
+
 
 export default server;

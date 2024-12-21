@@ -11,6 +11,11 @@ const Helpers = {
       return false;
     }
   },
+
+  //function for delete the keys from the array
+  DeleteKeys: (myObj, array) => {
+    
+  }
 };
 
 export default Helpers;

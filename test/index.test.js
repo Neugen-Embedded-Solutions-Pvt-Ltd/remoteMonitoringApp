@@ -10,15 +10,14 @@ describe("Test apis", () => {
 
 describe("Login API", () => {
   describe("Login API", () => {
-    it("should login successfully", function (done) {
-      this.timeout(5000);
+    it("should login successfully", (done) => {
       request(server)
         .post("/auth/login")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
         .expect(200)
         .send({
-          username: "test",
+          username: "s",
           password: "12",
         })
 
@@ -38,7 +37,7 @@ describe("Login API", () => {
         .set("Accept", "application/json")
         .expect(404)
         .send({
-          username: "qwaw",
+          username: "qw",
           password: "12",
         })
 
@@ -58,7 +57,7 @@ describe("Login API", () => {
         .set("Accept", "application/json")
         .expect(403)
         .send({
-          username: "manoj",
+          username: "a",
           password: "123",
         })
 
@@ -105,7 +104,7 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(409)
         .send({
-          username: "dasd",
+          username: "a",
           firstName: "we",
           lastName: "s",
           device_id: "1",
@@ -129,7 +128,7 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(409)
         .send({
-          username: "manoj",
+          username: "s",
           firstName: "we",
           lastName: "s",
           device_id: "10",
@@ -152,8 +151,7 @@ describe("Register api", () => {
 
 describe("All users data api", () => {
   describe("Getting all users data", () => {
-    it("Get all users data", function (done) {
-      this.timeout(5000);
+    it("Get all users data", (done) => {
       request(server)
         .get("/auth/alldata")
         .set("Content-Type", "application/json")
@@ -201,7 +199,7 @@ describe("Forgot Password API", () => {
         .set("Accept", "application/json")
         .expect(409)
         .send({
-          username: "waqs",
+          username: "wqs",
         })
 
         .expect("Content-Type", /json/)
@@ -243,7 +241,7 @@ describe("Forgot Password API", () => {
         .set("Accept", "application/json")
         .expect(409)
         .send({
-          email: "manoj.a.3139229@gmail.com",
+          email: "manoj.a.313929@gmail.com",
         })
 
         .expect("Content-Type", /json/)
@@ -266,7 +264,7 @@ describe("Reset Password API", () => {
         .send({
           password: "12",
           token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM0MTgyNzMxLCJleHAiOjE3NzczODI3MzF9.h1SJPeP9X_xTa-7Uy2k5T4PImtn2F0FiBwim089pSDE",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzMzOTI0Mjk5LCJleHAiOjE3MzQwMTA2OTl9.Uw_RJA5E5i8mqutHr8JxSARggFDhs3dCNzYoamDQysI",
         })
 
         .expect("Content-Type", /json/)

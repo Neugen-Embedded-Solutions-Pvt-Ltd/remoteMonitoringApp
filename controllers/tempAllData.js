@@ -6,10 +6,10 @@ import weatherApiData from "../utils/weatherApi.js";
 
 const tempController = {
   // Report generator
-  getTempratureAllData: async (req, res) => {
+  sendTemperatureReport: async (req, res) => {
     try {
       const dates = req.body;
-      const result = await temprature.getTempratureAllDatas(dates);
+      const result = await temprature.getTemperatureRangeByDate(dates);
       if (result.length == 0) {
         throw new Error(`No temprature found`);
       }
@@ -40,10 +40,10 @@ const tempController = {
   },
 
   // getting all temperature data from DB
-  tempratureData: async (req, res) => {
+  fetchAllTemperatureData: async (req, res) => {
     try {
       // Save today's forecast data yo DB
-      const result = await temprature.getTempratureAll();
+      const result = await temprature.getAllTempratureRecords();
 
       res.status(200).send({
         status: 200,
@@ -62,9 +62,9 @@ const tempController = {
   },
 
   //  Getiing all temperature data from temperatures table which device temprature data
-  deviceTempData: async (req, res) => {
+  getDeviceTemperatureLastHour: async (req, res) => {
     try {
-      let result = await temprature.getTemperatureData();
+      let result = await temprature.fetchTemperatureLastHour();
       if (result.length == 0) {
         return res.send({
           status: 400,
@@ -87,7 +87,7 @@ const tempController = {
   },
 
   // Public API data storing in temprature_records table
-  insertTodayTemp: async (req, res) => {
+  insertTodayTemperature: async (req, res) => {
     try {
       let weatherData = await weatherApiData();
       let weatherAllData = weatherData.forecast.forecastday;
@@ -103,11 +103,31 @@ const tempController = {
       };
 
       // Save today's forecast data yo DB
-      await temprature.createTempratureEntry(todayData);
+      await temprature.insertTemperatureRecord(todayData);
     } catch (error) {
       console.error("Error in tempratureData:", error);
     }
   },
+  getTemperatureAtFiveMinuteIntervals: async (req, res) => {
+    try {
+      let data = req.body;
+      console.log("input parameters: ", data)
+      const response = await temprature.getTemperatureByTimeInterval(data);
+      res.status(200).send({
+        status: 200,
+        message: "success",
+        data: response,
+      });
+    } catch (error) {
+      console.error("Error in tempratureData:", error);
+      res.status(500).json({
+        status: 500,
+        message: "Failed to process weather data",
+        err: error.message,
+      });
+    }
+  }
+
 };
 
 export default tempController; 
