@@ -30,7 +30,7 @@ const authController = {
 
       // Pasoword making Hash
       const hasedPassword = bcrypt.hashSync(password, 8);
-      let user = await User.insertNewUser({ password: hasedPassword, ...req.body }); // store details databases
+      let user = await User.insertNewUser({ ...req.body, password: hasedPassword }); // store details databases
 
       // Remove password from user object
       const data = Array.isArray(user) ? user : [user];
@@ -92,13 +92,21 @@ const authController = {
       ); // generate JWT token
       // delete (user.password); //
 
-      console.log(user)
+      const data = Array.isArray(user) ? user : [user];
+      const sanitizedData = data.map((user) => {
+        return Object.keys(user)
+          .filter((key) => key !== 'password')
+          .reduce((obj, key) => {
+            obj[key] = user[key];
+            return obj;
+          }, {});
+      });
 
       res.status(200).send({
         status: 200,
         message: "User logged in successfully",
         auth: true,
-        data: user,
+        data: sanitizedData,
         token,
       });
     } catch (err) {

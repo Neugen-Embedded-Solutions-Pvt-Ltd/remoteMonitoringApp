@@ -17,7 +17,7 @@ describe("Login API", () => {
         .set("Accept", "application/json")
         .expect(200)
         .send({
-          username: "s",
+          username: "manoj",
           password: "12",
         })
 
@@ -57,8 +57,8 @@ describe("Login API", () => {
         .set("Accept", "application/json")
         .expect(403)
         .send({
-          username: "a",
-          password: "123",
+          username: "manoj",
+          password: "12w",
         })
 
         .expect("Content-Type", /json/)
@@ -72,30 +72,31 @@ describe("Login API", () => {
 });
 //   Register
 describe("Register api", () => {
-  // describe("Register API", () => {
-  //   it("should register successfully", (done) => {
-  //     request(server)
-  //       .post("/auth/register")
-  //       .set("Content-Type", "application/json")
-  //       .set("Accept", "application/json")
-  //       .expect(201)
-  //       .send({
-  //         username: "wq",
-  //         firstName: "we",
-  //         lastName: "s",
-  //         device_id: "1",
-  //         email: "manoj+1@gmail.com",
-  //         password: "12",
-  //       })
+  describe("Register API", () => {
+    it("should register successfully", (done) => {
+      request(server)
+        .post("/auth/register")
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json")
+        .expect(201)
+        .send({
+          username: "manoj2",
+          firstName: "we",
+          lastName: "s",
+          device_id: "1",
+          email: "manoj+1@gmail.com",
+          password: "12",
+          admin_user: "2"
+        })
 
-  //       .expect("Content-Type", /json/)
-  //       .expect((response) => {
-  //         expect(response.body).not.to.be.empty;
-  //         expect(response.body).to.be.an("object");
-  //       })
-  //       .end(done);
-  //   });
-  // });
+        .expect("Content-Type", /json/)
+        .expect((response) => {
+          expect(response.body).not.to.be.empty;
+          expect(response.body).to.be.an("object");
+        })
+        .end(done);
+    });
+  });
   describe("User already exists", () => {
     it("should not register user already exists", (done) => {
       request(server)
@@ -104,7 +105,7 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(409)
         .send({
-          username: "a",
+          username: "manoj",
           firstName: "we",
           lastName: "s",
           device_id: "1",
@@ -128,7 +129,7 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(409)
         .send({
-          username: "s",
+          username: "manoj",
           firstName: "we",
           lastName: "s",
           device_id: "10",
@@ -222,7 +223,7 @@ describe("Forgot Password API", () => {
         .set("Accept", "application/json")
         .expect(200)
         .send({
-          email: "manoj.a.31929@gmail.com",
+          email: "manoj@gmail.com",
         })
 
         .expect("Content-Type", /json/)
@@ -264,7 +265,7 @@ describe("Reset Password API", () => {
         .send({
           password: "12",
           token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzMzOTI0Mjk5LCJleHAiOjE3MzQwMTA2OTl9.Uw_RJA5E5i8mqutHr8JxSARggFDhs3dCNzYoamDQysI",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM1Mzc5MzY0LCJleHAiOjE3MzU0NjU3NjR9.hpTiLYI_Ro9MS1uLDdysB9OqK0_D_zCOZooB5iRrAxA",
         })
 
         .expect("Content-Type", /json/)
