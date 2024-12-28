@@ -10,15 +10,11 @@ dataRouter.get("/tempreport", tempController.getTemperatureAtFiveMinuteIntervals
 
 // function make entry temprature data day once
 const tempratureInsert = () => {
-  console.log("function called");
-  // Call the function immediately
   const date = new Date().toISOString().split("T")[0];
-  console.log(date);
-  tempController.insertTodayTemperature(date);
+  tempController.insertTodayTemperature(date); 
 
   setInterval(() => {
     const date = new Date().toISOString().split("T")[0];
-    console.log(date);
     tempController.insertTodayTemperature(date);
   }, 24 * 60 * 60 * 1000);
 };

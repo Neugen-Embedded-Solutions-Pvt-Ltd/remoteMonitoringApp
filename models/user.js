@@ -1,27 +1,27 @@
 import query from "../config/database.js";
 // User model for to store in db queries
+const selecteUserQuery = "SELECT * FROM users where id = ?";
 const User = {
+
   // user registration
-  insertNewUser: async (userData) => {
+  insertNewUser: async ({ username, device_id, firstName, lastName, email, password, admin_user }) => {
     try {
       const insertUserQuery =
-        "INSERT INTO users (username, device_id, firstName, lastName, email, password) VALUES(?, ?, ?, ?, ?, ?)";
-      let result = await query(insertUserQuery, [
-        userData.username,
-        userData.device_id,
-        userData.firstName,
-        userData.lastName,
-        userData.email,
-        userData.password,
-      ]);
-      if (result.length > 0) {
-        return result[0]; // Return the first user object
-      } else {
-        return result; // More specific error message
+        "INSERT INTO users (username, device_id, firstName, lastName, email, password, admin_user) VALUES(?, ?, ?, ?, ?, ?, ?)";
+      let result = await query(insertUserQuery, [username, device_id, firstName, lastName, email, password, admin_user]);
+
+      if (result.affectedRows > 0) {
+        const userResult = await query(selecteUserQuery, [result.insertId]);
+        if (userResult.length > 0) {
+          return userResult[0];
+        }
+        throw new Error("Failed to fetch the inserted user details.");
       }
+      throw new Error("Failed to insert new user.");
+
     } catch (e) {
-      console.log("error in query");
-      throw new Error("Network timeout Error");
+      console.error("Error inserting new user:", e.message);
+      throw e; // Propagate the original error instead of creating a new one
     }
   },
 
@@ -61,7 +61,7 @@ const User = {
       const sql = "SELECT device_id FROM devices WHERE device_id = ?";
       const result = await query(sql, [device_id]);
       return result;
-    } catch (e) {}
+    } catch (e) { }
   },
 
   // Reset password

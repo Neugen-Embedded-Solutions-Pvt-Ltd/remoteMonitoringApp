@@ -25,7 +25,6 @@ const temperature = {
     try {
       const sql =
         "SELECT record_date,min_temperature,max_temperature FROM temperature_records WHERE record_date BETWEEN ? AND ? ORDER BY record_date ASC";
-      console.log(await dates);
       const result = await query(sql, [dates.fromdate, dates.todate]);
       return result;
     } catch (error) {

@@ -8,54 +8,53 @@ const authController = {
   // Register user
   registerUser: async (req, res) => {
     try {
-      const { username, device_id, firstName, lastName, email, password } =
+      const { username, device_id, email, password } =
         req.body;
 
       let findUser = await User.findUserByUsername(username);
-      // if (findUser.length == 0) {
-      //   return res.send({
-      //     status: 400,
-      //     message: 'User input not defined'
-      //   });
-      // }
-      if (findUser.length != 0) {
+      let findUserByEmail = await User.findUserByEmail(email);
+      if (findUser.length != 0 || findUserByEmail.length != 0) {
         return res.status(409).send({
           status: 409,
           message: "User already exist",
         });
       }
+      // Checking registred Device id 
       let getDeviceId = await User.fetchDeviceById(device_id);
-
       if (getDeviceId == 0) {
         return res.status(404).send({
           status: 404,
           message: "Device is not registered",
         });
       }
+
+      // Pasoword making Hash
       const hasedPassword = bcrypt.hashSync(password, 8);
-      await User.insertNewUser({
-        username,
-        device_id,
-        firstName,
-        lastName,
-        email,
-        password: hasedPassword,
-      }); // store details databases
-      // Generate JWT
-      const token = jwt.sign(
-        {
-          id: username,
-        },
-        process.env.JWT_SECRET,
-        {
-          expiresIn: 86400, // 24 hours
-        }
+      let user = await User.insertNewUser({ password: hasedPassword, ...req.body }); // store details databases
+
+      // Remove password from user object
+      const data = Array.isArray(user) ? user : [user];
+      const sanitizedData = data.map((user) => {
+        return Object.keys(user)
+          .filter((key) => key !== 'password')
+          .reduce((obj, key) => {
+            obj[key] = user[key];
+            return obj;
+          }, {});
+      });
+
+      // Generate JWT by using username
+      const token = jwt.sign({ id: username }, process.env.JWT_SECRET, { expiresIn: 86400, }// 24 hours
       ); // generate JWT token
+
+      // returing token and user deatils to clinet
       res.status(201).send({
         status: 201,
         message: "user created successfully",
         token: token,
+        data: sanitizedData
       });
+
     } catch (err) {
       console.log(err);
       res.status(500).send({
@@ -92,7 +91,7 @@ const authController = {
         }
       ); // generate JWT token
       // delete (user.password); //
- 
+
       console.log(user)
 
       res.status(200).send({
