@@ -1,6 +1,6 @@
 // TOken based Authorization
 
-import Helpers from "../utils/helpers.js";
+import Helpers from "../../utils/helpers.js";
 
 // security for API authorization
 async function verifyToken(req, res, next) {
@@ -11,7 +11,7 @@ async function verifyToken(req, res, next) {
         auth: false,
         message: "token not provided",
       }); // validate token provided
-    token = token.split(" ")[2]; // seprate the Authorization from token
+    token = token.split(" ")[2]; // separate the Authorization from token
     const result = await Helpers.tokenValidate(token);
     console.log(result);
     if (!result) {

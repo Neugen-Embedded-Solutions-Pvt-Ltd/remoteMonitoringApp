@@ -1,6 +1,6 @@
 import query from "../config/database.js";
 // User model for to store in db queries
-const selectUserQuery = "SELECT * FROM users where id = ?";
+
 const User = {
   // user registration
   insertNewUser: async ({
@@ -25,18 +25,18 @@ const User = {
         admin_user,
       ]);
 
-      if (result.affectedRows > 0) {
-        const userResult = await query(selectUserQuery, [result.insertId]);
-        if (userResult.length > 0) {
-          return userResult[0];
-        }
-        throw new Error("Failed to fetch the inserted user details.");
-      }
-      throw new Error("Failed to insert new user.");
+      return result;
     } catch (e) {
       console.error("Error inserting new user:", e.message);
       throw e; // Propagate the original error instead of creating a new one
     }
+  },
+
+  // fetch user details by id
+  fetchUserById: async ( userId ) => {
+    const findUserById = "SELECT * FROM users where id = ?";
+    const userResult = await query(findUserById, [userId]);
+    return userResult;
   },
 
   //user login

@@ -7,8 +7,7 @@ if (process.env.NODE_ENV !== 'dev') {
   dotenv.config({
     path: `.env.${process.env.NODE_ENV}`,
   });
-}
-import tableQueries from "../schemas/schma.js";
+} 
 
 // Create connection to database
 const pool = mysql.createPool({
@@ -31,16 +30,6 @@ pool.getConnection((err, connection) => {
   connection.release(); // Release the connection back to the pool
 });
 
-
-// create the table if not already created & selfinvoking
-(async () => {
-  try {
-    await query(tableQueries.userQuery); // create table for Users
-    await query(tableQueries.temperatureQuery); // create table for Temperature for device
-    await query(tableQueries.temperatureRecordsQuery); // create table for Temperature for global temperature
-  } catch (error) {
-    console.log("Error creating tables:", error);
-  }
-})();
+ 
 
 export default query;
