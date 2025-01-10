@@ -1,6 +1,6 @@
 // TOken based Authorization
 
-import Helpers from "../utils/helpers.js";
+import Helpers from "../../utils/helpers.js";
 
 // security for API authorization
 async function verifyToken(req, res, next) {

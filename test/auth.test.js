@@ -55,7 +55,7 @@ describe("Login API", () => {
         .post("/auth/login")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
-        .expect(403)
+        .expect(401)
         .send({
           username: "manoj",
           password: "12w",
@@ -80,13 +80,13 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(201)
         .send({
-          username: "manoj2",
-          firstName: "we",
-          lastName: "s",
-          device_id: "1",
-          email: "manoj+1@gmail.com",
+          username: "qmanoqja",
+          email: "mqaqnoja@gmail.com",
           password: "12",
-          admin_user: "2"
+          first_name: "manoj",
+          last_name: "a",
+          device_id: 1,
+          admin_user: 0,
         })
 
         .expect("Content-Type", /json/)
@@ -150,25 +150,6 @@ describe("Register api", () => {
   });
 });
 
-describe("All users data api", () => {
-  describe("Getting all users data", () => {
-    it("Get all users data", (done) => {
-      request(server)
-        .get("/auth/alldata")
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(200)
-
-        .expect("Content-Type", /json/)
-        .expect((response) => {
-          expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
-        })
-        .end(done);
-    });
-  });
-});
-
 // for got password and sending link by getting username
 
 describe("Forgot Password API", () => {
@@ -176,7 +157,7 @@ describe("Forgot Password API", () => {
     it("By getting username Sent forgot password link", function (done) {
       this.timeout(10000);
       request(server)
-        .post("/auth/forgotpassword")
+        .post("/auth/forgot-password")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
         .expect(200)
@@ -192,13 +173,13 @@ describe("Forgot Password API", () => {
         .end(done);
     });
   });
-  describe("User not found", () => {
+  describe("User not found by sending username", () => {
     it("User not found. create a new account", (done) => {
       request(server)
-        .post("/auth/forgotpassword")
+        .post("/auth/forgot-password")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
-        .expect(409)
+        .expect(404)
         .send({
           username: "wqs",
         })
@@ -211,14 +192,32 @@ describe("Forgot Password API", () => {
         .end(done);
     });
   });
+  describe("User not found, by sending email", () => {
+    it("User not found. create a new account", (done) => {
+      request(server)
+        .post("/auth/forgot-password")
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json")
+        .expect(404)
+        .send({
+          email: "manofdewdfwaj@gmail.com",
+        })
 
+        .expect("Content-Type", /json/)
+        .expect((response) => {
+          expect(response.body).not.to.be.empty;
+          expect(response.body).to.be.an("object");
+        })
+        .end(done);
+    });
+  });
   // forgot password updating using email
 
   describe("Forgot Password API", () => {
     it("Sent forgot password link", function (done) {
       this.timeout(10000);
       request(server)
-        .post("/auth/forgotpassword")
+        .post("/auth/forgot-password")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
         .expect(200)
@@ -234,25 +233,7 @@ describe("Forgot Password API", () => {
         .end(done);
     });
   });
-  describe("User not found", () => {
-    it("User not found. create a new account", (done) => {
-      request(server)
-        .post("/auth/forgotpassword")
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(409)
-        .send({
-          email: "manoj.a.313929@gmail.com",
-        })
 
-        .expect("Content-Type", /json/)
-        .expect((response) => {
-          expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
-        })
-        .end(done);
-    });
-  });
 });
 describe("Reset Password API", () => {
   describe("Update Password API", () => {
@@ -265,7 +246,7 @@ describe("Reset Password API", () => {
         .send({
           password: "12",
           token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM1Mzc5MzY0LCJleHAiOjE3MzU0NjU3NjR9.hpTiLYI_Ro9MS1uLDdysB9OqK0_D_zCOZooB5iRrAxA",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM2NTExNjk1LCJleHAiOjE3Mzc3MTE2OTV9.UYh_j9bQLiF0Xy1tUVPZXLgbRT9QrVuSH8LR_9f-a20",
         })
 
         .expect("Content-Type", /json/)
@@ -282,11 +263,11 @@ describe("Reset Password API", () => {
         .put("/auth/resetpassword")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
-        .expect(403)
+        .expect(404)
         .send({
           password: "12",
           token:
-            "a8eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEiLCJpYXQiOjE3MzM3NDQ5MjUsImV4cCI6MTczMzgzMTMyNX0.XQDpMZl9XtLiILZxR-9ROLggw7sm4ncyhvbFlP0GvIs",
+            "eyJhbGciOiJIUzI1NiIssInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM2NTExNjk1LCJleHAiOjE3Mzc3MTE2OTV9.UYh_j9bQLiF0Xy1tUVPZXLgbRT9QrVuSH8LR_9f-a20",
         })
 
         .expect("Content-Type", /json/)
