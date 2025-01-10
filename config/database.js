@@ -2,9 +2,12 @@
 import mysql from "mysql";
 import dotenv from "dotenv";
 import util from "util";
-dotenv.config({
-  path: `.env.${process.env.NODE_ENV}`,
-});
+
+if (process.env.NODE_ENV !== 'dev') {
+  dotenv.config({
+    path: `.env.${process.env.NODE_ENV}`,
+  });
+}
 import tableQueries from "../schemas/schma.js";
 
 // Create connection to database
@@ -34,7 +37,7 @@ pool.getConnection((err, connection) => {
   try {
     await query(tableQueries.userQuery); // create table for Users
     await query(tableQueries.temperatureQuery); // create table for Temperature for device
-    await query(tableQueries.temperatureRecorsQuery); // create table for Temperature for global temperature
+    await query(tableQueries.temperatureRecordsQuery); // create table for Temperature for global temperature
   } catch (error) {
     console.log("Error creating tables:", error);
   }

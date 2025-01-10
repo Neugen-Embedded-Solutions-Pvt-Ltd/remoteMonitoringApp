@@ -1,9 +1,8 @@
-import express from "express"; //API creation
+import express from "express";
 import bodyParser from "body-parser"; // JSON parser
 import cors from "cors"; //Cross-Origin Resource Sharing
 import path from "path";
 import http from "http";
-import https from "https";
 import winston from "winston";
 import fs from "fs";
 import { Server } from "socket.io";
@@ -12,26 +11,41 @@ import { fileURLToPath } from "url";
 import "./config/mqtt.js"; // establish MQTT connection
 
 import router from "./routes/authRoutes.js"; // Login middleware
-import dataRouter from "./routes/dataRoutes.js"; // Temprature middleware
+import dataRouter from "./routes/dataRoutes.js"; // Temperature middleware
 import setupMiddleware from "./logging/logger.js"; // logging in terminal
 import swaggerDocs from "./swagger/swagger.js";
 import verifyToken from "./middleware/authMiddleware.js"; // validate API request for particular endpoints after login
 import limiter from "./middleware/ratelimit.js"; // prevent network traffic and bot attacks
-import temperature from "./models/temprature.js";
-const app = express(); // initilize express
+import temperature from "./models/temperature.js";
+const app = express(); // initialize express
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const corsOptions = {
+  origin: "http://localhost:3000", //(https://your-client-app.com)    allowing particular origin
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
 
 setupMiddleware(app); // logger and security for API headers
 swaggerDocs(app); // Api documentation
 
-app.use(cors()); // restric the resources sharing globally
-app.use(express.json()); // middileware data in the json format
+app.use(
+  cors(corsOptions)
+); // restrict the resources sharing globally
+
+// app.use(
+//   cors({
+//     origin: "http://localhost:3000", // Front-end URL
+//     credentials: true, // Include cookies or tokens in the request
+//   })
+// );
+app.use(express.json()); // middleware data in the json format
 app.use(bodyParser.json()); // parses json data
 app.use(
   bodyParser.urlencoded({
     extended: false,
   })
-); // parse URL encoded form data -> avalible in req.body
+); // parse URL encoded form data -> available in req.body
 app.use(express.static(path.join(__dirname, "public")));
 
 // Global Error Handler
@@ -56,10 +70,10 @@ app.use((err, req, res, next) => {
   });
 });
 
-// enpoints
+// endpoints
 app.use("/auth", limiter, router); // login endpoint
 app.use("/api", verifyToken, router); // authorized end-points
-app.use("/iot", dataRouter); // temprature end-points
+app.use("/iot", dataRouter); // temperature end-points
 
 app.get("/", (req, res) => {
   res.send("server is running");
@@ -73,18 +87,12 @@ app.get("/home", (req, res) => {
   res.send("This is the Demo page for" + " setting up express server !");
 });
 
-// https crarte key and certificate
+// https certificate key and certificate
 const privateKey = fs.readFileSync("private-key.pem", "utf8");
 const certificate = fs.readFileSync("certificate.pem", "utf8");
 const credentials = { key: privateKey, cert: certificate };
 
 const server = http.createServer(app);
-
-const corsOptions = {
-  origin: "*", //(https://your-client-app.com)    allowing particular origin
-  methods: ["GET", "POST", "PUT", "DELETE"],
-  credentials: true,
-};
 
 const io = new Server(server, {
   cors: corsOptions,
@@ -94,13 +102,13 @@ const io = new Server(server, {
 io.on("connection", (socket) => {
   console.log("User Connected", socket.id);
 
-  socket.on("device temperature", async (tempratureData) => {
-    await temperature.insertDeviceTemprature(tempratureData); // inserting temperatureF into DB
-    tempratureData.id = socket.id; // Add socket ID
-    console.log("temperature updated in the DB:", tempratureData);
+  socket.on("device temperature", async (temperatureData) => {
+    await temperature.insertDeviceTemperature(temperatureData); // inserting temperature into DB
+    temperatureData.id = socket.id; // Add socket ID
+    console.log("temperature updated in the DB:", temperatureData);
 
     // Emit back the response to client
-    io.emit("temperature to client", tempratureData);
+    io.emit("temperature to client", temperatureData);
   });
 
   // socket got disconnected
@@ -114,12 +122,12 @@ io.on("connection", (socket) => {
 //   const todayData = {
 //     date: today,
 //     temp: 10,
-//     tempmax: 10,
-//     tempmin: 10,
+//     temp_max: 10,
+//     temp_min: 10,
 //     conditions: 'cool',
 //   };
 
-//   temprature.insertTemperatureRecord(todayData);
+//   temperature.insertTemperatureRecord(todayData);
 // }
 // Call the function every minute
 // setInterval(generateTodayDataAndSave, 60 * 1000);
@@ -132,9 +140,5 @@ server.listen(process.env.SERVICE_PORT, () => {
 server.on("error", (error) => {
   console.error("Server error:", error);
 });
-
-
-
-
 
 export default server;

@@ -19,7 +19,7 @@ const authController = {
           message: "User already exist",
         });
       }
-      // Checking registred Device id 
+      // Checking registered Device id
       let getDeviceId = await User.fetchDeviceById(device_id);
       if (getDeviceId == 0) {
         return res.status(404).send({
@@ -28,15 +28,18 @@ const authController = {
         });
       }
 
-      // Pasoword making Hash
-      const hasedPassword = bcrypt.hashSync(password, 8);
-      let user = await User.insertNewUser({ ...req.body, password: hasedPassword }); // store details databases
+      // Password making Hash
+      const hashedPassword = bcrypt.hashSync(password, 8);
+      let user = await User.insertNewUser({
+        ...req.body,
+        password: hashedPassword,
+      }); // store details databases
 
       // Remove password from user object
       const data = Array.isArray(user) ? user : [user];
       const sanitizedData = data.map((user) => {
         return Object.keys(user)
-          .filter((key) => key !== 'password')
+          .filter((key) => key !== "password")
           .reduce((obj, key) => {
             obj[key] = user[key];
             return obj;
@@ -44,17 +47,19 @@ const authController = {
       });
 
       // Generate JWT by using username
-      const token = jwt.sign({ id: username }, process.env.JWT_SECRET, { expiresIn: 86400, }// 24 hours
+      const token = jwt.sign(
+        { id: username },
+        process.env.JWT_SECRET,
+        { expiresIn: 86400 } // 24 hours
       ); // generate JWT token
 
-      // returing token and user deatils to clinet
+      // returning token and user details to client
       res.status(201).send({
         status: 201,
         message: "user created successfully",
         token: token,
-        data: sanitizedData
+        data: sanitizedData,
       });
-
     } catch (err) {
       console.log(err);
       res.status(500).send({
@@ -67,7 +72,7 @@ const authController = {
   loginUser: async (req, res) => {
     try {
       const { username, password } = req.body;
-
+      console.log(req.body);
       // Find user by username
       const user = await User.findUserByUsername(username); // login with email
       if (user.length === 0)
@@ -95,7 +100,7 @@ const authController = {
       const data = Array.isArray(user) ? user : [user];
       const sanitizedData = data.map((user) => {
         return Object.keys(user)
-          .filter((key) => key !== 'password')
+          .filter((key) => key !== "password")
           .reduce((obj, key) => {
             obj[key] = user[key];
             return obj;
@@ -152,7 +157,7 @@ const authController = {
     }
   },
 
-  // forgot Password genrating link and providing to Client
+  // forgot Password generating link and providing to Client
   sendPasswordResetLink: async (req, res) => {
     try {
       const { username, email } = req.body;
@@ -187,7 +192,7 @@ const authController = {
         status: 200,
         message: "reset password link sent to your email",
         token: token,
-        link: forgotPasswordLink
+        link: forgotPasswordLink,
       });
     } catch (error) {
       console.log(error);
