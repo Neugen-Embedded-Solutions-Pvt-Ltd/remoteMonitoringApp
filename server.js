@@ -10,8 +10,8 @@ import { fileURLToPath } from "url";
 
 import "./src/config/mqtt.js"; // establish MQTT connection
 
-// import  from "./src/routes/authRoutes.js"; // Login middleware
-import { tempratureRoute, AuthRoute } from "./src/routes/authRoutes.js"; // Temperature middleware
+import AuthRoute from "./src/routes/authRoutes.js"; // Login middleware
+import temperatureRoute from "./src/routes/temperatureRoutes.js"; // Temperature middleware
 import setupMiddleware from "./logging/logger.js"; // logging in terminal
 import swaggerDocs from "./swagger/swagger.js";
 import verifyToken from "./src/middleware/authMiddleware.js"; // validate API request for particular endpoints after login
@@ -66,7 +66,7 @@ app.use((err, req, res, next) => {
 // endpoints
 app.use("/auth", limiter, AuthRoute); // login endpoint
 app.use("/api", verifyToken, AuthRoute); // authorized end-points
-app.use("/iot", tempratureRoute); // temperature end-points
+app.use("/iot", temperatureRoute); // temperature end-points
 
 app.get("/", (req, res) => {
   res.send("server is running");

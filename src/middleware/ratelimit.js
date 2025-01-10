@@ -1,4 +1,4 @@
-// prevent network trafic and bot attack
+// prevent network traffic and bot attack
 import rateLimit from "express-rate-limit";
 // request limiter, in 15 mins 20 requests allowed
 const limiter = rateLimit({
@@ -6,7 +6,7 @@ const limiter = rateLimit({
   // limit: 5,
   max: 100,
   standardHeaders: true,
-  leagacyHeaders: false,
+  legacyHeaders: false,
 });
 
 export default limiter;

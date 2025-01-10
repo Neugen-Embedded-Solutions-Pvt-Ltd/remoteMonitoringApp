@@ -30,7 +30,7 @@ describe("Login API", () => {
     });
   });
   describe("User not found", () => {
-    it("Login falied", (done) => {
+    it("Login failed", (done) => {
       request(server)
         .post("/auth/login")
         .set("Content-Type", "application/json")
@@ -50,7 +50,7 @@ describe("Login API", () => {
     });
   });
   describe("wrong password and rejected", () => {
-    it("Login falied", (done) => {
+    it("Login failed", (done) => {
       request(server)
         .post("/auth/login")
         .set("Content-Type", "application/json")
@@ -121,8 +121,8 @@ describe("Register api", () => {
         .end(done);
     });
   });
-  describe("Device is not registred", () => {
-    it("device not registred", (done) => {
+  describe("Device is not registered", () => {
+    it("device not registered", (done) => {
       request(server)
         .post("/auth/register")
         .set("Content-Type", "application/json")

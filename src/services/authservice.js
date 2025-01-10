@@ -11,11 +11,11 @@ import {
   UserNotFoundError,
   InvalidCredentialsError,
   EmailSendError,
-  InvalidTokenorExipred,
+  InvalidTokenOrExpired,
 } from "../../utils/AppError.js";
 
 const AuthService = {
-  registeruserService: async (UserData) => {
+  registerUserService: async (UserData) => {
     const { username, device_id, email, password } = UserData;
 
     let findUser = await User.findUserByUsername(username);
@@ -44,7 +44,7 @@ const AuthService = {
     if (user.affectedRows > 0) {
       const userResult = await User.fetchUserById(user.insertId);
 
-      // returing same user detail
+      // retuning same user detail
       user = userResult[0];
     }
 
@@ -84,7 +84,7 @@ const AuthService = {
     const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
     if (!passwordIsValid) throw new InvalidCredentialsError();
 
-    // Token genration
+    // Token generation
     const token = jwt.sign(
       {
         id: username,
@@ -138,7 +138,7 @@ const AuthService = {
     return {
       token: token,
       link: forgotPasswordLink,
-      sucess: result ? true : false,
+      success: result ? true : false,
     };
   },
 
@@ -149,7 +149,7 @@ const AuthService = {
     const result = await Helpers.tokenValidate(token);
     console.log(result);
     if (!result) {
-      throw new InvalidTokenorExipred();
+      throw new InvalidTokenOrExpired();
     }
 
     let options = {
