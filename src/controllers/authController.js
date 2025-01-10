@@ -5,13 +5,13 @@ import User from "../models/user.js";
 import Helpers from "../../utils/helpers.js";
 import { sendEmail } from "../config/emailConfigure.js";
 import AuthService from "../services/authservice.js";
-import { AppError, InvalidParamterError } from "../../utils/AppError.js";
+import { AppError, InvalidParameterError } from "../../utils/AppError.js";
 
 const authController = {
   // Register user
   registerUser: async (req, res) => {
     try {
-      const result = await AuthService.registeruserService(req.body);
+      const result = await AuthService.registerUserService(req.body);
       console.log(result);
       // returning token and user details to client
       res.status(201).send({
