@@ -8,15 +8,15 @@ import fs from "fs";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 
-import "./config/mqtt.js"; // establish MQTT connection
+import "./src/config/mqtt.js"; // establish MQTT connection
 
-import router from "./routes/authRoutes.js"; // Login middleware
-import dataRouter from "./routes/dataRoutes.js"; // Temperature middleware
+// import  from "./src/routes/authRoutes.js"; // Login middleware
+import { tempratureRoute, AuthRoute } from "./src/routes/authRoutes.js"; // Temperature middleware
 import setupMiddleware from "./logging/logger.js"; // logging in terminal
 import swaggerDocs from "./swagger/swagger.js";
-import verifyToken from "./middleware/authMiddleware.js"; // validate API request for particular endpoints after login
-import limiter from "./middleware/ratelimit.js"; // prevent network traffic and bot attacks
-import temperature from "./models/temperature.js";
+import verifyToken from "./src/middleware/authMiddleware.js"; // validate API request for particular endpoints after login
+import limiter from "./src/middleware/ratelimit.js"; // prevent network traffic and bot attacks
+import temperature from "./src/models/temperature.js";
 const app = express(); // initialize express
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -29,16 +29,9 @@ const corsOptions = {
 setupMiddleware(app); // logger and security for API headers
 swaggerDocs(app); // Api documentation
 
-app.use(
-  cors(corsOptions)
-); // restrict the resources sharing globally
+// restrict the resources sharing globally
+app.use(cors(corsOptions));
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:3000", // Front-end URL
-//     credentials: true, // Include cookies or tokens in the request
-//   })
-// );
 app.use(express.json()); // middleware data in the json format
 app.use(bodyParser.json()); // parses json data
 app.use(
@@ -71,9 +64,9 @@ app.use((err, req, res, next) => {
 });
 
 // endpoints
-app.use("/auth", limiter, router); // login endpoint
-app.use("/api", verifyToken, router); // authorized end-points
-app.use("/iot", dataRouter); // temperature end-points
+app.use("/auth", limiter, AuthRoute); // login endpoint
+app.use("/api", verifyToken, AuthRoute); // authorized end-points
+app.use("/iot", tempratureRoute); // temperature end-points
 
 app.get("/", (req, res) => {
   res.send("server is running");
@@ -86,11 +79,6 @@ app.get("/", function (req, res) {
 app.get("/home", (req, res) => {
   res.send("This is the Demo page for" + " setting up express server !");
 });
-
-// https certificate key and certificate
-const privateKey = fs.readFileSync("private-key.pem", "utf8");
-const certificate = fs.readFileSync("certificate.pem", "utf8");
-const credentials = { key: privateKey, cert: certificate };
 
 const server = http.createServer(app);
 
@@ -116,21 +104,7 @@ io.on("connection", (socket) => {
     console.log("user disconnected");
   });
 });
-// function generateTodayDataAndSave() {
-//   const today = new Date().toISOString().slice(0, 10); // Get today's date in YYYY-MM-DD format
 
-//   const todayData = {
-//     date: today,
-//     temp: 10,
-//     temp_max: 10,
-//     temp_min: 10,
-//     conditions: 'cool',
-//   };
-
-//   temperature.insertTemperatureRecord(todayData);
-// }
-// Call the function every minute
-// setInterval(generateTodayDataAndSave, 60 * 1000);
 // server listening
 server.listen(process.env.SERVICE_PORT, () => {
   console.log(`cloud server listening on ${process.env.SERVICE_PORT}`); // hosting port number

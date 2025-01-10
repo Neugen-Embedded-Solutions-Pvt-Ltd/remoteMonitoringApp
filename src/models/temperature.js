@@ -1,6 +1,6 @@
 import query from "../config/database.js";
 
-const temperature = {
+const Temperature = {
   // insert global temperature to the database once
   insertTemperatureRecord: async (temperatureData) => {
     try {
@@ -28,6 +28,7 @@ const temperature = {
       const result = await query(sql, [dates.from_date, dates.to_date]);
       return result;
     } catch (error) {
+      
       console.log("Error fetching temperature data:", error.message);
       throw new Error("Network timeout Error");
     }
@@ -55,21 +56,7 @@ const temperature = {
       console.log("Error fetching temperature data:", error.message);
       throw new Error("Network timeout Error");
     }
-  },
-
-  // Retrieve the last 1 hour temperature
-  fetchTemperatureLastHour: async () => {
-    try {
-      //SELECT * FROM temperatures WHERE timestamp > NOW() - INTERVAL 1 HOUR
-      const sql =
-        "SELECT * FROM temperatures WHERE timestamp > NOW() - INTERVAL 1 HOUR";
-      const result = await query(sql);
-      return result;
-    } catch (error) {
-      console.log("Error fetching temperature data:", error.message);
-      throw new Error("Network timeout Error");
-    }
-  },
+  }, 
 
   // Retrieving aggregate temperature data over the specified time interval
   getTemperatureByTimeInterval: async (data) => {
@@ -99,10 +86,13 @@ const temperature = {
 
       return result;
     } catch (error) {
-      console.log("Error Retrieving aggregate temperature data:", error.message);
+      console.log(
+        "Error Retrieving aggregate temperature data:",
+        error.message
+      );
       throw new Error("Network timeout Error");
     }
   },
 };
 
-export default temperature;
+export default Temperature;
