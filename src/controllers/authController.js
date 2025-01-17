@@ -9,10 +9,10 @@ import { AppError, InvalidParameterError } from "../../utils/AppError.js";
 
 const authController = {
   // Register user
-  registerUser: async (req, res) => {
+  userRegistration: async (req, res) => {
     try {
-      const result = await AuthService.registerUserService(req.body);
-      console.log(result);
+      const result = await AuthService.userRegistrationService(req.body);
+     
       // returning token and user details to client
       res.status(201).send({
         status: 201,
@@ -40,7 +40,6 @@ const authController = {
   // API for Login
   loginUser: async (req, res) => {
     try {
-      console.log(req.body);
       const result = await AuthService.loginUserService(req.body);
 
       res.status(200).send({
@@ -70,7 +69,6 @@ const authController = {
   // forgot Password generating link and providing to Client
   sendPasswordResetLink: async (req, res) => {
     try {
-      console.log(req.body);
       let response = await AuthService.sendResetLinkToUser(req.body);
       return res.status(200).send({
         status: 200,
@@ -95,7 +93,7 @@ const authController = {
   },
 
   // update password from Email
-  resetPasswordWithToken: async (req, res) => {
+  resetPassword: async (req, res) => {
     try {
       let response = await AuthService.resetPassword(req.body);
       if (response)

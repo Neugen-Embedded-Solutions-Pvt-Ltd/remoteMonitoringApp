@@ -1,5 +1,6 @@
-import TemperatureService from "../services/tempratureService.js";
-import { AppError } from "../../utils/AppError.js"; 
+import fs from "fs";
+import TemperatureService from "../services/temperatureService.js";
+import { AppError } from "../../utils/AppError.js";
 
 const tempController = {
   // getting all temperature data from DB
@@ -29,10 +30,9 @@ const tempController = {
     }
   },
 
-  fetchTTemperatureInIntervals: async (req, res) => {
+  fetchTemperatureIntervals: async (req, res) => {
     try {
       let data = req.body;
-      console.log("input parameters: ", data);
       const result =
         await TemperatureService.getTemperatureAtFiveMinuteIntervals(data);
 
@@ -59,15 +59,20 @@ const tempController = {
   },
 
   // Report generator
-  temperatureReport: async (req, res) => {
+  generateTemperatureReport: async (req, res) => {
     try {
       const response = await TemperatureService.generateReportData(req.body);
       if (response)
         res.status(200).send({
           status: 200,
           message: "report sent successfully",
-          data: result,
+          data: response,
         });
+      fs.unlink(file, (unlinkErr) => {
+        if (unlinkErr) {
+          console.error("Error deleting file:", unlinkErr);
+        }
+      });
     } catch (error) {
       console.log(error);
       return res.status(300).send({

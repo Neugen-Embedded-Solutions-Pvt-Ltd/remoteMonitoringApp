@@ -1,25 +1,7 @@
 import query from "../config/database.js";
 
 const Temperature = {
-  // insert global temperature to the database once
-  insertTemperatureRecord: async (temperatureData) => {
-    try {
-      const sql =
-        "INSERT INTO temperature_records (record_date,temperature, min_temperature, max_temperature, conditions) VALUES(?, ?, ?, ?, ?)";
-      const result = await query(sql, [
-        temperatureData.date,
-        temperatureData.temp,
-        temperatureData.tempMin,
-        temperatureData.tempMax,
-        temperatureData.conditions,
-      ]);
-      return result;
-    } catch (error) {
-      console.log("Error fetching temperature data:", error.message);
-      throw new Error("Network timeout Error");
-    }
-  },
-
+ 
   // temperature data for a specified date range and time range
   getTemperatureRangeByDate: async (dates) => {
     try {
@@ -33,30 +15,6 @@ const Temperature = {
       throw new Error("Network timeout Error");
     }
   },
-
-  // Inserting a temperatures from Global API to our db Daily once
-  insertDeviceTemperature: async (data) => {
-    try {
-      const sql = `INSERT INTO temperatures (device_id, temperature) VALUES(?, ?)`;
-      const result = await query(sql, [data.device_id, data.temperature]);
-      return result;
-    } catch (error) {
-      console.log("Error fetching temperature data:", error.message);
-      throw new Error("Network timeout Error");
-    }
-  },
-
-  // Get the all records of user device from DB
-  getAllTemperatureRecords: async () => {
-    try {
-      const sql = "SELECT * FROM temperature_records";
-      const result = await query(sql);
-      return result;
-    } catch (error) {
-      console.log("Error fetching temperature data:", error.message);
-      throw new Error("Network timeout Error");
-    }
-  }, 
 
   // Retrieving aggregate temperature data over the specified time interval
   getTemperatureByTimeInterval: async (data) => {

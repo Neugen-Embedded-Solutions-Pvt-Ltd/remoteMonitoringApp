@@ -1,10 +1,14 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import User from "../models/user.js";
-import { sendEmail } from "../config/emailConfigure.js";
+import Users from "../models/user.js";
 import Helpers from "../../utils/helpers.js";
+import User from "../models/UserModel.js";
+import Device from "../models/DeviceModel.js";
 
+
+
+import { sendEmail } from "../config/emailConfigure.js";
 import {
   UserExistsError,
   DeviceNotRegisteredError,
@@ -14,42 +18,36 @@ import {
   InvalidTokenOrExpired,
 } from "../../utils/AppError.js";
 
-const AuthService = {
-  registerUserService: async (UserData) => {
-    const { username, device_id, email, password } = UserData;
+await User.sync({ alter: true });
 
-    let findUser = await User.findUserByUsername(username);
-    let findUserByEmail = await User.findUserByEmail(email);
-    console.log("findUser:", findUser);
-    console.log("findUserByEmail:", findUserByEmail);
+const AuthService = {
+  //  Function to allow users to Register
+  userRegistrationService: async (UserData) => {
+    const { username, device_id, email, password } = UserData;
+    let findUser = await User.findOne({ where: { username: username } }); //findUserByUsername(username);
+    let findUserByEmail = await User.findOne({ where: { email: email } }); //findUserByEmail(email);
+
     // validating user already exist
-    if (findUser.length != 0 || findUserByEmail.length != 0) {
+    if (findUser != null || findUserByEmail != null) {
       throw new UserExistsError();
     }
-    console.log("running");
     // Checking registered Device id
-    let getDeviceId = await User.fetchDeviceById(device_id);
-    if (getDeviceId == 0) {
+    let getDeviceId = await Device.findOne({ where: { device_id: device_id } });
+    if (getDeviceId == null) {
       throw new DeviceNotRegisteredError();
     }
 
     // Password Hashing
     const hashedPassword = bcrypt.hashSync(password, 8);
-    let user = await User.insertNewUser({
+    let user = await User.create({
       ...UserData,
       password: hashedPassword,
     }); // store details databases
-    console.log("user", user);
-    console.log("findUser:", findUser);
-    if (user.affectedRows > 0) {
-      const userResult = await User.fetchUserById(user.insertId);
-
-      // retuning same user detail
-      user = userResult[0];
-    }
 
     // Remove password from user object
-    const data = Array.isArray(user) ? user : [user];
+    const data = Array.isArray(user.dataValues)
+      ? user.dataValues
+      : [user.dataValues];
     const sanitizedData = data.map((user) => {
       return Object.keys(user)
         .filter((key) => key !== "password")
@@ -72,13 +70,10 @@ const AuthService = {
     };
   },
 
-  //   Login user Service
+  //  Function to allow users to login
   loginUserService: async ({ username, password }) => {
-    // Find user by username
-    const user = await User.findUserByUsername(username); // login with email
-
-    // If user not found throw error
-    if (user.length === 0) throw new UserNotFoundError();
+    const user = await User.findOne({ where: { username: username } }); // Find user by username
+    if (user == null) throw new UserNotFoundError(); // If user not found throw error
 
     // Password comparison using bcrypt
     const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
@@ -94,8 +89,12 @@ const AuthService = {
         expiresIn: 86400, // 24 hours
       }
     );
+
     // Removing user password from user object
-    const data = Array.isArray(user) ? user : [user];
+    const data = Array.isArray(user.dataValues)
+      ? user.dataValues
+      : [user.dataValues];
+
     const sanitizedData = data.map((user) => {
       return Object.keys(user)
         .filter((key) => key !== "password")
@@ -105,35 +104,36 @@ const AuthService = {
         }, {});
     });
 
-    // return the token & user details
     return {
       token,
       sanitizedData,
     };
   },
-  // password reset to user email
+
+  // Function to allow users to send resetpassword link to email
   sendResetLinkToUser: async ({ username, email }) => {
     let response;
     if (email) {
-      response = await User.findUserByEmail(email);
+      response = await User.findOne({ where: { email: email } });
     } else {
-      response = await User.findUserByUsername(username);
+      response = await User.findOne({ where: { username: username } });
     }
-    console.log(response);
-    if (response.length === 0) {
+
+    if (response == null) {
       throw new UserNotFoundError();
     }
     const token = jwt.sign({ id: response.username }, process.env.JWT_SECRET, {
       expiresIn: 1200000,
     });
+
     const forgotPasswordLink = `${process.env.CLIENT_URL}/?token=${token}`;
-    console.log(forgotPasswordLink);
+
     let options = {
       to: response.email,
       subject: "Password Reset Link",
       message: `<h2>Your Link for reset password <a href='${forgotPasswordLink}' target="_blank"'>reset password</a> </h2>`,
     };
-    console.log(options);
+
     let result = await sendEmail(options); // email template for share reset password link
     return {
       token: token,
@@ -142,24 +142,24 @@ const AuthService = {
     };
   },
 
-  // Resetpassword using token and password
-
+  // Function to allow users to resetpassword  from email link
   resetPassword: async ({ password, token }) => {
-    console.log(token);
     const result = await Helpers.tokenValidate(token);
-    console.log(result);
     if (!result) {
       throw new InvalidTokenOrExpired();
     }
-
-    let options = {
+    let UserInfo = {
       username: result.id,
       password: bcrypt.hashSync(password, 8),
     };
+    let user = await User.findOne({ where: { username: UserInfo.username } });
 
-    let response = await User.updateUserPassword(options);
-    if (!response) throw new EmailSendError();
-
+    if (user) {
+      await user.update(UserInfo);
+    } else {
+      console.error("User not found");
+    }
+    if (!user) throw new EmailSendError();
     return true;
   },
 };

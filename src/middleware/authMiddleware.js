@@ -13,7 +13,6 @@ async function verifyToken(req, res, next) {
       }); // validate token provided
     token = token.split(" ")[2]; // separate the Authorization from token
     const result = await Helpers.tokenValidate(token);
-    console.log(result);
     if (!result) {
       return res.status(403).send({
         status: 403,

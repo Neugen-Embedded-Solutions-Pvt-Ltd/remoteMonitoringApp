@@ -31,7 +31,7 @@ class DeviceRegisteredError extends AppError {
 
 class InvalidCredentialsError extends AppError {
   constructor() {
-    super("Invalid email or password", 401); // HTTP 401 Unauthorized
+    super("Invalid password", 401); // HTTP 401 Unauthorized
   }
 }
 
