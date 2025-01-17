@@ -1,6 +1,5 @@
 import fs from "fs"; 
 
-import Temperature from "../models/temperature.js";
 import generateReport from "../../utils/reportGenerator.js";
 import {
   FileNotFound,
@@ -8,18 +7,24 @@ import {
   TemperatureRecordsNotAvailable,
 } from "../../utils/AppError.js";
 
+import Temperature from "../models/TemperatureModel.js";
+
+import temperatureSqlFunctions from "../models/temperatureSqlFunctions.js";
 const TemperatureService = {
   // public API data fetching
   fetchAllTemperatureData: async () => {
-    const result = await Temperature.getAllTemperatureRecords();
+    const result = await Temperature.findAll(); 
 
-    if (result.length == 0) {
+    if (result  == null) {
       throw new TemperatureRecordsNotAvailable();
     }
     return result;
   },
+  
   getTemperatureAtFiveMinuteIntervals: async (data) => {
-    const result = await Temperature.getTemperatureByTimeInterval(data);
+    const result = await temperatureSqlFunctions.getTemperatureByTimeInterval(
+      data
+    );
 
     if (result.length == 0) {
       throw new TemperatureRecordsNotAvailable();
@@ -29,13 +34,16 @@ const TemperatureService = {
 
   // generating the reports
   generateReportData: async (dates) => {
-    const result = await Temperature.getTemperatureRangeByDate(dates);
+    const result = await temperatureSqlFunctions.getTemperatureRangeByDate(
+      dates
+    );
     if (result.length == 0) {
       throw new Error(`No temperature found`);
     }
     const file = await generateReport(result);
     console.log(file, "line-2");
     if (fs.existsSync(file)) {
+      return file
       res.status(200).download(file, (err) => {
         if (err) {
           console.error("Error sending file:", err);

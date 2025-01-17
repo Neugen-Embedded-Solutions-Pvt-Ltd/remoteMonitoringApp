@@ -80,8 +80,8 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(201)
         .send({
-          username: "qmanoqja",
-          email: "mqaqnoja@gmail.com",
+          username: "manoj",
+          email: "manoj@gmail.com",
           password: "12",
           first_name: "manoj",
           last_name: "a",

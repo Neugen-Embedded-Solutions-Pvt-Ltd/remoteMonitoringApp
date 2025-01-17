@@ -86,28 +86,9 @@ const io = new Server(server, {
   cors: corsOptions,
 });
 
-// Create a Socket connection
-io.on("connection", (socket) => {
-  console.log("User Connected", socket.id);
-
-  socket.on("device temperature", async (temperatureData) => {
-    await temperature.insertDeviceTemperature(temperatureData); // inserting temperature into DB
-    temperatureData.id = socket.id; // Add socket ID
-    console.log("temperature updated in the DB:", temperatureData);
-
-    // Emit back the response to client
-    io.emit("temperature to client", temperatureData);
-  });
-
-  // socket got disconnected
-  socket.on("disconnect", function () {
-    console.log("user disconnected");
-  });
-});
-
-// server listening
+// server listening port
 server.listen(process.env.SERVICE_PORT, () => {
-  console.log(`cloud server listening on ${process.env.SERVICE_PORT}`); // hosting port number
+  console.log(`server listening on ${process.env.SERVICE_PORT}`); // hosting port number
 });
 
 // server listening Error handling
