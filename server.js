@@ -4,8 +4,6 @@ import cors from "cors"; //Cross-Origin Resource Sharing
 import path from "path";
 import http from "http";
 import winston from "winston";
-import fs from "fs";
-import { Server } from "socket.io";
 import { fileURLToPath } from "url";
 
 import "./src/config/mqtt.js"; // establish MQTT connection
@@ -16,7 +14,7 @@ import setupMiddleware from "./logging/logger.js"; // logging in terminal
 import swaggerDocs from "./swagger/swagger.js";
 import verifyToken from "./src/middleware/authMiddleware.js"; // validate API request for particular endpoints after login
 import limiter from "./src/middleware/ratelimit.js"; // prevent network traffic and bot attacks
-import temperature from "./src/models/temperature.js";
+
 const app = express(); // initialize express
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -81,10 +79,6 @@ app.get("/home", (req, res) => {
 });
 
 const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: corsOptions,
-});
 
 // server listening port
 server.listen(process.env.SERVICE_PORT, () => {

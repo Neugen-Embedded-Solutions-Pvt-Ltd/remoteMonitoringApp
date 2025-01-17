@@ -1,18 +1,12 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-
-import User from "../models/user.js";
-import Helpers from "../../utils/helpers.js";
-import { sendEmail } from "../config/emailConfigure.js";
 import AuthService from "../services/authservice.js";
-import { AppError, InvalidParameterError } from "../../utils/AppError.js";
+import { AppError } from "../../utils/AppError.js";
 
 const authController = {
   // Register user
   userRegistration: async (req, res) => {
     try {
       const result = await AuthService.userRegistrationService(req.body);
-     
+
       // returning token and user details to client
       res.status(201).send({
         status: 201,

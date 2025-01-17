@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-import Users from "../models/user.js";
 import Helpers from "../../utils/helpers.js";
 import User from "../models/UserModel.js";
 import Device from "../models/DeviceModel.js";
@@ -30,8 +29,8 @@ const AuthService = {
     // validating user already exist
     if (findUser != null || findUserByEmail != null) {
       throw new UserExistsError();
-    }
-    // Checking registered Device id
+    };
+
     let getDeviceId = await Device.findOne({ where: { device_id: device_id } });
     if (getDeviceId == null) {
       throw new DeviceNotRegisteredError();
@@ -142,7 +141,7 @@ const AuthService = {
     };
   },
 
-  // Function to allow users to resetpassword  from email link
+  // Function to allow users to resetpassword from email link
   resetPassword: async ({ password, token }) => {
     const result = await Helpers.tokenValidate(token);
     if (!result) {
@@ -153,11 +152,10 @@ const AuthService = {
       password: bcrypt.hashSync(password, 8),
     };
     let user = await User.findOne({ where: { username: UserInfo.username } });
-
     if (user) {
       await user.update(UserInfo);
     } else {
-      console.error("User not found");
+      throw new UserNotFoundError();
     }
     if (!user) throw new EmailSendError();
     return true;
