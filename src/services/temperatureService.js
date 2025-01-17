@@ -41,7 +41,6 @@ const TemperatureService = {
       throw new Error(`No temperature found`);
     }
     const file = await generateReport(result);
-    console.log(file, "line-2");
     if (fs.existsSync(file)) {
       return file
       res.status(200).download(file, (err) => {

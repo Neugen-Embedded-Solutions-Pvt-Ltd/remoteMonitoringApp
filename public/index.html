@@ -9,37 +9,7 @@
 </head>
 
 <body>
-    <h2>Hello world</h2>
-    <form action="" id="forms">
-        <input type="text" name="" id="values">
-        <button type="submit">submit</button>
-    </form>
-
-    <script src="/socket.io/socket.io.js"></script>
-    <script nonce="8IBTHwOdqNKAWeKl7plt8g==">
-        function randomTemprature(max, min) {
-            return Math.floor(Math.random() * (max - min)) + min;
-        };
-        let socket = io('https://remote-monitor.netlify.app/');
-        socket.on('connect', (connect) => {
-            console.log('user connected', socket.id);
-            socket.on('device temperature', (tempratureData) => {
-                console.log('message from server:', tempratureData);
-            });
-            // emit temprature signal to server 5 secs once
-            setInterval(() => {
-                let valuePass = randomTemprature(0, 50);
-                let UserTempData = {
-                    device_id: 2,
-                    temperature: valuePass
-                };
-                console.log(UserTempData);
-                socket.emit('device temperature', UserTempData);
-            }, 1000000);
-
-        });
-
-    </script>
+    <h2>server is running</h2> 
 </body>
 
 </html>
