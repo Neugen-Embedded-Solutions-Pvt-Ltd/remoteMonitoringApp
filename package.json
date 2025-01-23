@@ -17,7 +17,7 @@
   "keywords": [],
   "author": "Manoj",
   "license": "ISC",
-  "description": "This completly based on the IOT based web application",
+  "description": "This completely based on the IOT based web application",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.3",

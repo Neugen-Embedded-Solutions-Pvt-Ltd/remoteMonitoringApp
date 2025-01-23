@@ -1,4 +1,4 @@
-import Sequelize, { DataTypes } from "sequelize"; 
+import Sequelize, { DataTypes } from "sequelize";
 import config from "../../config/config.js";
 
 // First create a Sequelize instance using your config
@@ -14,42 +14,28 @@ const sequelize = new Sequelize(
 );
 
 // Then use the sequelize instance to define the model
-const Temperature = sequelize.define(
-  "temperature_record",
+const UserToken = sequelize.define(
+  "user_token",
   {
-    record_date: {
-      type: DataTypes.DATE,
+    username: {
+      type: DataTypes.STRING, 
       allowNull: false,
     },
-
-    temperature: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-
-    min_temperature: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    max_temperature: {
-      type: DataTypes.STRING,
-      allowNull: true,
-    },
-    conditions: {
+    refresh_token: {
       type: DataTypes.STRING,
       allowNull: false,
     },
     createdAt: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
     updatedAt: {
       type: DataTypes.DATE,
-      allowNull: false,
+      allowNull: true,
     },
   },
-  {
-    timestamps: true,
-  }
+//   {
+//     timestamps: true,
+//   }
 );
-export default Temperature;
+export default UserToken;
