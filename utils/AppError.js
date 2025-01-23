@@ -55,7 +55,7 @@ class InvalidParameterError extends AppError {
 
 class InvalidTokenOrExpired extends AppError {
   constructor() {
-    super("Invalid token or expired token", 404); // HTTP 404 FOund
+    super("Invalid token or expired token", 403);
   }
 }
 
@@ -75,7 +75,7 @@ class FileNotFound extends AppError {
     super("File not found", 404); // HTTP 404 FOund
   }
 }
-
+ 
 export {
   AppError,
   UserNotFoundError,

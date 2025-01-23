@@ -5,8 +5,6 @@ import Helpers from "../../utils/helpers.js";
 import User from "../models/UserModel.js";
 import Device from "../models/DeviceModel.js";
 
-
-
 import { sendEmail } from "../config/emailConfigure.js";
 import {
   UserExistsError,
@@ -16,20 +14,21 @@ import {
   EmailSendError,
   InvalidTokenOrExpired,
 } from "../../utils/AppError.js";
+import UserToken from "../models/TokenModel.js";
 
-await User.sync({ alter: true });
+// await User.sync({ alter: true });
 
 const AuthService = {
   //  Function to allow users to Register
   userRegistrationService: async (UserData) => {
     const { username, device_id, email, password } = UserData;
-    let findUser = await User.findOne({ where: { username: username } }); //findUserByUsername(username);
-    let findUserByEmail = await User.findOne({ where: { email: email } }); //findUserByEmail(email);
+    let findUser = await User.findOne({ where: { username: username } });
+    let findUserByEmail = await User.findOne({ where: { email: email } });
 
     // validating user already exist
     if (findUser != null || findUserByEmail != null) {
       throw new UserExistsError();
-    };
+    }
 
     let getDeviceId = await Device.findOne({ where: { device_id: device_id } });
     if (getDeviceId == null) {
@@ -56,38 +55,33 @@ const AuthService = {
         }, {});
     });
 
-    // Generate JWT by using username
-    const token = jwt.sign(
-      { id: username },
-      process.env.JWT_SECRET,
-      { expiresIn: 86400 } // 24 hours
-    ); // generate JWT token
+    // Access token expires in 15min
+    const accessToken = Helpers.generateAccessToken(username);
+
+    // Refresh token expires in 30d for long span login
+    const refreshToken = Helpers.generateRefreshToken(username);
 
     return {
       sanitizedData,
-      token,
+      accessToken,
+      refreshToken,
     };
   },
 
   //  Function to allow users to login
   loginUserService: async ({ username, password }) => {
-    const user = await User.findOne({ where: { username: username } }); // Find user by username
+    const user = await User.findOne({ where: { username: username } });
     if (user == null) throw new UserNotFoundError(); // If user not found throw error
 
     // Password comparison using bcrypt
     const passwordIsValid = bcrypt.compareSync(password, user.password); // decrypt the password
     if (!passwordIsValid) throw new InvalidCredentialsError();
 
-    // Token generation
-    const token = jwt.sign(
-      {
-        id: username,
-      },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: 86400, // 24 hours
-      }
-    );
+    // Access token expires in 15min
+    const accessToken = Helpers.generateAccessToken(username);
+
+    // Refresh token expires in 30d for long span login
+    const refreshToken = Helpers.generateRefreshToken(username);
 
     // Removing user password from user object
     const data = Array.isArray(user.dataValues)
@@ -104,7 +98,8 @@ const AuthService = {
     });
 
     return {
-      token,
+      accessToken,
+      refreshToken,
       sanitizedData,
     };
   },
@@ -143,7 +138,7 @@ const AuthService = {
 
   // Function to allow users to resetpassword from email link
   resetPassword: async ({ password, token }) => {
-    const result = await Helpers.tokenValidate(token);
+    const result = await Helpers.validateAccessToken(token);
     if (!result) {
       throw new InvalidTokenOrExpired();
     }
@@ -159,6 +154,23 @@ const AuthService = {
     }
     if (!user) throw new EmailSendError();
     return true;
+  },
+
+  // Refresh token request link
+  refreshTokenService: async (refreshToken) => {
+    const findRefreshToken = await UserToken.findOne({
+      where: { refresh_token: refreshToken },
+    });
+    if (!findRefreshToken) {
+      throw new InvalidTokenOrExpired();
+    }
+    const validatedRefreshToken = Helpers.verifyRefreshToken(refreshToken);
+    if (!validatedRefreshToken) {
+      throw new InvalidTokenOrExpired();
+    }
+    const accessToken = Helpers.generateAccessToken(validatedRefreshToken.id);
+
+    return accessToken;
   },
 };
 

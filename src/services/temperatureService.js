@@ -10,6 +10,8 @@ import {
 import Temperature from "../models/TemperatureModel.js";
 
 import temperatureSqlFunctions from "../models/temperatureSqlFunctions.js";
+await Temperature.sync({ alter: true });
+
 const TemperatureService = {
   // public API data fetching
   fetchAllTemperatureData: async () => {
