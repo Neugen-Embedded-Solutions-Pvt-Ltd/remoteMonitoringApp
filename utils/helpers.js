@@ -4,10 +4,12 @@ const Helpers = {
   // Token validation
   validateAccessToken: async (token) => {
     try {
+      console.log(token);
       const result = jwt.verify(token, process.env.JWT_SECRET);
       return result;
     } catch (error) {
-      return false;
+      console.log("AccessToken Error:", error);
+      return error;
     }
   },
 

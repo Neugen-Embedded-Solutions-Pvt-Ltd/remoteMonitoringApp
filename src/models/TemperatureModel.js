@@ -1,4 +1,4 @@
-import Sequelize, { DataTypes } from "sequelize"; 
+import Sequelize, { DataTypes } from "sequelize";
 import config from "../../config/config.js";
 
 // First create a Sequelize instance using your config
@@ -8,8 +8,7 @@ const sequelize = new Sequelize(
   config.password,
   {
     host: config.host,
-    dialect: config.dialect, // usually 'mysql', 'postgres', etc.
-    // other options from your config...
+    dialect: config.dialect,
   }
 );
 
@@ -21,12 +20,10 @@ const Temperature = sequelize.define(
       type: DataTypes.DATE,
       allowNull: false,
     },
-
     temperature: {
       type: DataTypes.STRING,
       allowNull: false,
     },
-
     min_temperature: {
       type: DataTypes.STRING,
       allowNull: false,

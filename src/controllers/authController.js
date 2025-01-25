@@ -1,21 +1,17 @@
 import AuthService from "../services/authservice.js";
-import { AppError } from "../../utils/AppError.js";
-
+import { AppError } from "../../utils/AppError.js"; 
 
 const authController = {
   // Register user
   userRegistration: async (req, res) => {
     try {
-      const result = await AuthService.userRegistrationService(req.body);
-
-      // returning token and user details to client
+      const result = await AuthService.userRegistrationService(req.body); 
       res.status(201).send({
         status: 201,
         message: "user created successfully",
-        token: result.token,
-        data: result.sanitizedData,
+        data: result.passwordRemoved,
         accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        refreshToken: result.longTermRefreshToken,
       });
     } catch (error) {
       console.log(error);
@@ -38,13 +34,12 @@ const authController = {
   loginUser: async (req, res) => {
     try {
       const result = await AuthService.loginUserService(req.body);
-
       res.status(200).send({
         status: 200,
         message: "User logged in successfully",
-        data: result.sanitizedData,
+        data: result.passwordRemoved,
         accessToken: result.accessToken,
-        refreshToken: result.refreshToken,
+        refreshToken: result.longTermRefreshToken,
       });
     } catch (error) {
       console.log(error);
@@ -66,10 +61,11 @@ const authController = {
   // forgot Password generating link and providing to Client
   sendPasswordResetLink: async (req, res) => {
     try {
+      console.log(req.body);
       let response = await AuthService.sendResetLinkToUser(req.body);
       return res.status(200).send({
         status: 200,
-        message: "reset password link sent to your email",
+        message: "Password reset link sent to your email",
         response,
       });
     } catch (error) {

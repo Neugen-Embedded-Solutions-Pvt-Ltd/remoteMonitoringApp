@@ -1,8 +1,7 @@
 import query from "../config/database.js";
 
 const Temperature = {
- 
-  // temperature data for a specified date range and time range
+  //retrieving temperature data for a specified date and time interval/
   getTemperatureRangeByDate: async (dates) => {
     try {
       const sql =
@@ -10,7 +9,6 @@ const Temperature = {
       const result = await query(sql, [dates.from_date, dates.to_date]);
       return result;
     } catch (error) {
-      
       console.log("Error fetching temperature data:", error.message);
       throw new Error("Network timeout Error");
     }
@@ -33,15 +31,12 @@ const Temperature = {
       GROUP BY 
         DATE_FORMAT(created_at, '%Y-%m-%d %H:%i')    
       ORDER BY
-        timestamp;  
-      `; // from time interval 5 minute make average , min and max temperature and give it as one
-
+        timestamp;`;
       const result = await query(sql, [
         data.inputDate,
         data.startTime,
         data.endTime,
       ]);
-
       return result;
     } catch (error) {
       console.log(
