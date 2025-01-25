@@ -134,7 +134,7 @@
  *                default: a
  *     responses:
  *      200:
- *        description: reset password link sent to your email
+ *        description: Password reset link sent to your email
  *      409:
  *        description: User not found, create new account
  *      404:

@@ -19,7 +19,7 @@ const sendEmail = async (options) => {
   });
   const mailOptions = {
     from: "manojarun4820@gmail.com",
-    to: options.to,
+    to: "manoj.a.31929@gmail.com", //options.to,
     subject: options.subject,
     html: options.message,
   }; 

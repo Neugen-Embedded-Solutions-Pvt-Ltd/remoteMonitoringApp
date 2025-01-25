@@ -7,8 +7,9 @@ await UserToken.sync({ alter: true });
 // security for API authorization
 async function verifyToken(req, res, next) {
   try { 
+    console.log(req.headers);
     let accessToken = req.headers["authorization"]; // get token from header
-    let refreshToken = req.headers["refreshToken"];
+    let refreshToken = req.headers["refreshtoken"];
 
     
     if (!accessToken && !refreshToken) {
@@ -17,8 +18,10 @@ async function verifyToken(req, res, next) {
         .send({ auth: false, message: "Access Denied. No token provided." });
     }
 
-    accessToken = accessToken.split(" ")[2]; // separate the Authorization from token
+    accessToken = accessToken.split(" ")[1]; // separate the Authorization from token
+    
     const result = await Helpers.validateAccessToken(accessToken);
+    console.log(result);
     if (!result) {
       return res.status(403).send({
         status: 403,
@@ -38,12 +41,12 @@ async function verifyToken(req, res, next) {
       });
     }
 
-    const validatedRefreshToken = Helpers.verifyRefreshToken(refreshToken);
-    if (!validatedRefreshToken) {
-      return res
-        .status(401)
-        .send({ auth: false, message: "Access Denied. No token provided." });
-    }
+    // const validatedRefreshToken = Helpers.verifyRefreshToken(refreshToken);
+    // if (!validatedRefreshToken) {
+    //   return res
+    //     .status(401)
+    //     .send({ auth: false, message: "Access Denied. No token provided." });
+    // }
 
     req.user = result;
     next();

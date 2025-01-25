@@ -8,8 +8,7 @@ const sequelize = new Sequelize(
   config.password,
   {
     host: config.host,
-    dialect: config.dialect, // usually 'mysql', 'postgres', etc.
-    // other options from your config...
+    dialect: config.dialect,
   }
 );
 
