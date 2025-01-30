@@ -1,16 +1,5 @@
-import Sequelize, { DataTypes } from "sequelize"; 
-import config from "../../config/config.js";
-
-// First create a Sequelize instance using your config
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
-    host: config.host,
-    dialect: config.dialect, 
-  }
-);
+import { DataTypes } from "sequelize";
+import { sequelize } from "../config/database.js";
 
 // Then use the sequelize instance to define the model
 const User = sequelize.define(
@@ -46,11 +35,11 @@ const User = sequelize.define(
       allowNull: false,
     },
     createdAt: {
-      type: DataTypes.DATE, 
+      type: DataTypes.DATE,
       allowNull: false,
     },
     updatedAt: {
-      type: DataTypes.DATE, 
+      type: DataTypes.DATE,
       allowNull: false,
     },
   },

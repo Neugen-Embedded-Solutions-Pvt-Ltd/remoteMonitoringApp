@@ -1,16 +1,6 @@
-import Sequelize, { DataTypes } from "sequelize";
-import config from "../../config/config.js";
+import { DataTypes } from "sequelize";
 
-// First create a Sequelize instance using your config
-const sequelize = new Sequelize(
-  config.database,
-  config.username,
-  config.password,
-  {
-    host: config.host,
-    dialect: config.dialect,
-  }
-);
+import { sequelize } from "../config/database.js";
 
 // Then use the sequelize instance to define the model
 const Temperature = sequelize.define(

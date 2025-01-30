@@ -55,7 +55,7 @@ app.use((err, req, res, next) => {
 // endpoints
 app.use("/auth", limiter, AuthRoute);
 app.use("/api", verifyToken, AuthRoute);
-app.use("/iot", verifyToken, temperatureRoute);
+app.use("/iot", temperatureRoute);
 
 app.get("/", (req, res) => {
   res.send("server is running");

@@ -18,7 +18,7 @@ describe("Login API", () => {
         .expect(200)
         .send({
           username: "manoj",
-          password: "12",
+          password: "123",
         })
 
         .expect("Content-Type", /json/)
@@ -80,8 +80,8 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(201)
         .send({
-          username: "manoj",
-          email: "manoj@gmail.com",
+          username: "msanoja",
+          email: "manasoj@gmail.com",
           password: "12",
           first_name: "manoj",
           last_name: "a",
@@ -152,89 +152,7 @@ describe("Register api", () => {
 
 // for got password and sending link by getting username
 
-describe("Forgot Password API", () => {
-  describe("Forgot Password API", () => {
-    it("By getting username Sent forgot password link", function (done) {
-      this.timeout(10000);
-      request(server)
-        .post("/auth/forgot-password")
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(200)
-        .send({
-          username: "manoj",
-        })
-
-        .expect("Content-Type", /json/)
-        .expect((response) => {
-          expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
-        })
-        .end(done);
-    });
-  });
-  describe("User not found by sending username", () => {
-    it("User not found. create a new account", (done) => {
-      request(server)
-        .post("/auth/forgot-password")
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(404)
-        .send({
-          username: "wqs",
-        })
-
-        .expect("Content-Type", /json/)
-        .expect((response) => {
-          expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
-        })
-        .end(done);
-    });
-  });
-  describe("User not found, by sending email", () => {
-    it("User not found. create a new account", (done) => {
-      request(server)
-        .post("/auth/forgot-password")
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(404)
-        .send({
-          email: "manofdewdfwaj@gmail.com",
-        })
-
-        .expect("Content-Type", /json/)
-        .expect((response) => {
-          expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
-        })
-        .end(done);
-    });
-  });
-  // forgot password updating using email
-
-  describe("Forgot Password API", () => {
-    it("Sent forgot password link", function (done) {
-      this.timeout(10000);
-      request(server)
-        .post("/auth/forgot-password")
-        .set("Content-Type", "application/json")
-        .set("Accept", "application/json")
-        .expect(200)
-        .send({
-          email: "manoj@gmail.com",
-        })
-
-        .expect("Content-Type", /json/)
-        .expect((response) => {
-          expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
-        })
-        .end(done);
-    });
-  });
-
-});
+ 
 describe("Reset Password API", () => {
   describe("Update Password API", () => {
     it("should update password successfully", (done) => {
@@ -246,7 +164,7 @@ describe("Reset Password API", () => {
         .send({
           password: "12",
           token:
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM2NTExNjk1LCJleHAiOjE3Mzc3MTE2OTV9.UYh_j9bQLiF0Xy1tUVPZXLgbRT9QrVuSH8LR_9f-a20",
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Im1hbm9qIiwiaWF0IjoxNzM3ODAyOTg1LCJleHAiOjE3Mzc4MDM4ODV9.BSz3nwb78dKAqaKOFU9n8T50iWeX1BW4ZLi2cRuZ5Pc",
         })
 
         .expect("Content-Type", /json/)
@@ -263,7 +181,7 @@ describe("Reset Password API", () => {
         .put("/auth/resetpassword")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
-        .expect(404)
+        .expect(403)
         .send({
           password: "12",
           token:

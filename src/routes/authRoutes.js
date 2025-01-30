@@ -7,5 +7,5 @@ AuthRoute.post("/register", authController.userRegistration);
 AuthRoute.post("/login", authController.loginUser);
 AuthRoute.post("/forgotpassword", authController.sendPasswordResetLink);
 AuthRoute.put("/resetpassword", authController.resetPassword);
-AuthRoute.post("/refresh", authController.refreshToken);
+// AuthRoute.post("/refresh", authController.refreshToken);
 export default AuthRoute;

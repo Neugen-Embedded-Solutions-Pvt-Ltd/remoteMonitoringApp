@@ -1,17 +1,17 @@
 import AuthService from "../services/authservice.js";
-import { AppError } from "../../utils/AppError.js"; 
+import { AppError } from "../../utils/AppError.js";
 
 const authController = {
   // Register user
   userRegistration: async (req, res) => {
     try {
-      const result = await AuthService.userRegistrationService(req.body); 
+      const result = await AuthService.userRegistrationService(req.body);
       res.status(201).send({
         status: 201,
         message: "user created successfully",
         data: result.passwordRemoved,
         accessToken: result.accessToken,
-        refreshToken: result.longTermRefreshToken,
+        // refreshToken: result.longTermRefreshToken,
       });
     } catch (error) {
       console.log(error);
@@ -39,7 +39,7 @@ const authController = {
         message: "User logged in successfully",
         data: result.passwordRemoved,
         accessToken: result.accessToken,
-        refreshToken: result.longTermRefreshToken,
+        // refreshToken: result.longTermRefreshToken,
       });
     } catch (error) {
       console.log(error);
@@ -62,11 +62,10 @@ const authController = {
   sendPasswordResetLink: async (req, res) => {
     try {
       console.log(req.body);
-      let response = await AuthService.sendResetLinkToUser(req.body);
+      await AuthService.sendResetLinkToUser(req.body);
       return res.status(200).send({
         status: 200,
         message: "Password reset link sent to your email",
-        response,
       });
     } catch (error) {
       console.log(error);
@@ -111,32 +110,32 @@ const authController = {
     }
   },
 
-  refreshToken: async (req, res) => {
-    try {
-      let refreshToken = req.headers["refreshToken"]; 
-      const response = await AuthService.refreshTokenService(refreshToken);
-      if (response)
-        return res.status(200).send({
-          status: 200,
-          message: "Access token sent successful",
-          accessToken: response,
-        });
-    } catch (error) {
-      console.log(error);
-      if (error instanceof AppError) {
-        res.status(error.statusCode).json({
-          status: error.statusCode,
-          message: error.message,
-        });
-      } else {
-        console.error("Unexpected error:", error);
-        res.status(500).json({
-          status: 500,
-          message: "Internal server error",
-        });
-      }
-    }
-  },
+  // refreshToken: async (req, res) => {
+  //   try {
+  //     let refreshToken = req.headers["refreshToken"];
+  //     const response = await AuthService.refreshTokenService(refreshToken);
+  //     if (response)
+  //       return res.status(200).send({
+  //         status: 200,
+  //         message: "Access token sent successful",
+  //         accessToken: response,
+  //       });
+  //   } catch (error) {
+  //     console.log(error);
+  //     if (error instanceof AppError) {
+  //       res.status(error.statusCode).json({
+  //         status: error.statusCode,
+  //         message: error.message,
+  //       });
+  //     } else {
+  //       console.error("Unexpected error:", error);
+  //       res.status(500).json({
+  //         status: 500,
+  //         message: "Internal server error",
+  //       });
+  //     }
+  //   }
+  // },
 };
 
 export default authController;

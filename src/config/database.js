@@ -2,6 +2,7 @@
 import mysql from "mysql";
 import dotenv from "dotenv";
 import util from "util";
+import { Sequelize } from "sequelize";
 
 if (process.env.NODE_ENV !== 'dev') {
   dotenv.config({
@@ -20,6 +21,7 @@ const pool = mysql.createPool({
 
 const query = util.promisify(pool.query).bind(pool);  // remove promise method from codebase, which is older method
 
+
 // Establish the connection
 pool.getConnection((err, connection) => {
   if (err) {
@@ -29,7 +31,24 @@ pool.getConnection((err, connection) => {
   console.log("Database connection ready");
   connection.release(); // Release the connection back to the pool
 });
-
  
+const configs= {
+  database: "device",
+  username: "root",
+  password: "password",
+  host: "localhost",
+  dialect: "mysql",  // or 'postgres', 'sqlite', 'mariadb', 'mssql'
+  port: 3306        // optional, depends on your database
+};
+
+export const sequelize = new Sequelize(
+  configs.database,
+  configs.username,
+  configs.password,
+  {
+    host: configs.host,
+    dialect: configs.dialect,
+  }
+);
 
 export default query;
