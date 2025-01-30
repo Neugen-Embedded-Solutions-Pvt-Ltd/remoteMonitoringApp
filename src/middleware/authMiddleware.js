@@ -2,14 +2,14 @@
 
 import Helpers from "../../utils/helpers.js";
 import UserToken from "../models/TokenModel.js";
-await UserToken.sync({ alter: true });
+// await UserToken.sync({ alter: true });
 
 // security for API authorization
 async function verifyToken(req, res, next) {
   try { 
     console.log(req.headers);
     let accessToken = req.headers["authorization"]; // get token from header
-    let refreshToken = req.headers["refreshtoken"];
+    // let refreshToken = req.headers["refreshtoken"];
 
     
     if (!accessToken && !refreshToken) {
@@ -30,16 +30,16 @@ async function verifyToken(req, res, next) {
     }
 
     // Validating refresh Tokens
-    const UserResult = await UserToken.findOne({
-      where: { refresh_token: refreshToken },
-    });
+    // const UserResult = await UserToken.findOne({
+    //   where: { refresh_token: refreshToken },
+    // });
 
-    if (!UserResult) {
-      return res.status(403).send({
-        status: 403,
-        message: "Invalid token",
-      });
-    }
+    // if (!UserResult) {
+    //   return res.status(403).send({
+    //     status: 403,
+    //     message: "Invalid token",
+    //   });
+    // }
 
     // const validatedRefreshToken = Helpers.verifyRefreshToken(refreshToken);
     // if (!validatedRefreshToken) {

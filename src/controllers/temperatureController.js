@@ -6,7 +6,9 @@ const tempController = {
   // getting all temperature data from DB
   fetchAllTemperatureData: async (req, res) => {
     try {
-      const result = await TemperatureService.fetchAllTemperatureData();
+      const result = await TemperatureService.fetchAllTemperatureData(
+        req.query
+      );
 
       res.status(200).send({
         status: 200,
@@ -32,10 +34,14 @@ const tempController = {
 
   fetchTemperatureIntervals: async (req, res) => {
     try {
-      let data = req.body;
+      let bodyData = req.body;
+      let queryData = req.query
       const result =
-        await TemperatureService.getTemperatureAtFiveMinuteIntervals(data);
-
+        await TemperatureService.getTemperatureAtFiveMinuteIntervals(
+          bodyData,
+          queryData
+        );
+console.log(result);
       res.status(200).send({
         status: 200,
         message: "success",
