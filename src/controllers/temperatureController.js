@@ -41,7 +41,6 @@ const tempController = {
           bodyData,
           queryData
         );
-console.log(result);
       res.status(200).send({
         status: 200,
         message: "success",

@@ -61,7 +61,6 @@ const authController = {
   // forgot Password generating link and providing to Client
   sendPasswordResetLink: async (req, res) => {
     try {
-      console.log(req.body);
       await AuthService.sendResetLinkToUser(req.body);
       return res.status(200).send({
         status: 200,
