@@ -35,7 +35,7 @@ const tempController = {
   fetchTemperatureIntervals: async (req, res) => {
     try {
       let bodyData = req.body;
-      let queryData = req.query
+      let queryData = req.query;
       const result =
         await TemperatureService.getTemperatureAtFiveMinuteIntervals(
           bodyData,
@@ -66,32 +66,32 @@ const tempController = {
   // Report generator
   generateTemperatureReport: async (req, res) => {
     try {
-      const response = await TemperatureService.generateReportData(req.body);
-      if (response)
-        res.status(200).send({
-          status: 200,
-          message: "report sent successfully",
-          data: response,
-        });
-      fs.unlink(file, (unlinkErr) => {
-        if (unlinkErr) {
-          console.error("Error deleting file:", unlinkErr);
+      const file = await TemperatureService.generateReportData(
+        req.body
+      );
+      // Send the file to the client
+      res.status(200).download(file, (err) => {
+        if (err) {
+          console.error("Error sending file:", err);
+          throw new Error("Failed to send file");
         }
+
+        // Delete the file after it has been sent
+        // fs.unlink(file, (unlinkErr) => {
+        //   if (unlinkErr) {
+        //     console.error("Error deleting file:", unlinkErr);
+        //   }
+        // });
       });
     } catch (error) {
-      console.log(error);
-      return res.status(300).send({
-        status: 300,
-        message: "data not between that date",
-      });
-      console.log(error);
+      console.error("Error in /generate-report route:", error);
       if (error instanceof AppError) {
         res.status(error.statusCode).json({
           status: error.statusCode,
           message: error.message,
         });
-      } else {
-        console.error("Unexpected error:", error);
+      } else { 
+         
         res.status(500).json({
           status: 500,
           message: "Internal server error",

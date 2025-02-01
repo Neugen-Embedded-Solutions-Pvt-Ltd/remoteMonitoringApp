@@ -14,9 +14,6 @@ mqttClient.on('connect', () => {
   console.log('Connected to MQTT broker');
 });
 
-// if error is return it will be returned
-// mqttClient.on('error', (error) => {
-//   console.error('Connection error:', error);
-// });
+ 
 
 export default mqttClient;

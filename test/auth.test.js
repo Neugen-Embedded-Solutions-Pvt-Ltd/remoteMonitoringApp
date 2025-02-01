@@ -18,7 +18,7 @@ describe("Login API", () => {
         .expect(200)
         .send({
           username: "manoj",
-          password: "123",
+          password: "12",
         })
 
         .expect("Content-Type", /json/)
@@ -80,9 +80,9 @@ describe("Register api", () => {
         .set("Accept", "application/json")
         .expect(201)
         .send({
-          username: "msanoja",
-          email: "manasoj@gmail.com",
-          password: "12",
+          username: "mwsanoja",
+          email: "manwasoj@gmail.com",
+          password: "1w2",
           first_name: "manoj",
           last_name: "a",
           device_id: 1,
@@ -103,14 +103,15 @@ describe("Register api", () => {
         .post("/auth/register")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
-        .expect(409)
+        .expect(403)
         .send({
           username: "manoj",
           firstName: "we",
           lastName: "s",
           device_id: "1",
-          email: "manoj+1@gmail.com",
-          password: "12",
+          email: "manoj@gmail.com",
+          password: "12", 
+          admin_user: 0,
         })
 
         .expect("Content-Type", /json/)
@@ -127,14 +128,15 @@ describe("Register api", () => {
         .post("/auth/register")
         .set("Content-Type", "application/json")
         .set("Accept", "application/json")
-        .expect(409)
+        .expect(403)
         .send({
           username: "manoj",
           firstName: "we",
           lastName: "s",
-          device_id: "10",
-          email: "manoj+1@gmail.com",
+          device_id: 10,
+          email: "manoj@gmail.com",
           password: "12",
+          admin_user: 0,
         })
 
         .expect("Content-Type", /json/)

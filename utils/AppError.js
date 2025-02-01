@@ -75,6 +75,21 @@ class FileNotFound extends AppError {
     super("File not found", 404); // HTTP 404 FOund
   }
 }
+class InvalidDate extends AppError {
+  constructor() {
+    super("Invalid date", 403); // HTTP 404 FOund
+  }
+}
+class TemperatureNotFound extends AppError {
+  constructor() {
+    super("No temperature found", 403); // HTTP 404 FOund
+  }
+}
+class FieldsNotFound extends AppError {
+  constructor(message = "Invalid fields", statusCode = 403) {
+    super(message, statusCode); // Default message and status code
+  }
+}
  
 export {
   AppError,
@@ -90,4 +105,7 @@ export {
   InvalidTokenOrExpired,
   ReportGenerateError,
   FileNotFound,
+  InvalidDate,
+  TemperatureNotFound,
+  FieldsNotFound,
 };
