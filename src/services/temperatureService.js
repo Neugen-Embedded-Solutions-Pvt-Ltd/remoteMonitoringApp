@@ -1,8 +1,11 @@
 import fs from "fs";
 import generateReport from "../../utils/reportGenerator.js";
 import {
+  FieldsNotFound,
   FileNotFound,
+  InvalidDate,
   ReportGenerateError,
+  TemperatureNotFound,
   TemperatureRecordsNotAvailable,
 } from "../../utils/AppError.js";
 import Temperature from "../models/TemperatureModel.js";
@@ -49,8 +52,8 @@ const TemperatureService = {
     }
     const { currentPage, pageLimit, filteredRecords } = Helpers.Pagination(
       filteredRecord,
-      queryData.page,
-      queryData.limit
+      page,
+      limit
     );
     if (filteredRecords.length === 0) {
       throw new TemperatureRecordsNotAvailable();
@@ -66,6 +69,12 @@ const TemperatureService = {
   // getting temperature in 5 mins as average
   getTemperatureAtFiveMinuteIntervals: async (bodyData, queryData) => {
     let { from_date, to_date } = bodyData;
+
+    if (!from_date || !to_date) {
+      throw new FieldsNotFound(
+        "Required fields (from_date, to_date) cannot be empty or undefined"
+      );
+    }
     const filteredRecord = await Temperature.findAll({
       attributes: [
         [
@@ -118,8 +127,8 @@ const TemperatureService = {
     }
     const { currentPage, pageLimit, filteredRecords } = Helpers.Pagination(
       originalArray,
-      queryData.page,
-      queryData.limit
+      (queryData.page = 1),
+      (queryData.limit = 10)
     );
     return {
       totalRecords: filteredRecords.length,
@@ -131,37 +140,37 @@ const TemperatureService = {
 
   // Generating a detailed temperature report and exporting it to an Excel sheet for analysis and record-keeping
   generateReportData: async (dates) => {
+    const from_date = new Date(dates.from_date);
+    const to_date = new Date(dates.to_date);
+
+    if (!from_date || !to_date) {
+      throw new FieldsNotFound(
+        "Required fields (from_date, to_date) cannot be empty or undefined"
+      );
+    }
+    if (from_date > to_date) {
+      throw new InvalidDate();
+    }
     const result = await Temperature.findAll({
       attributes: ["record_date", "min_temperature", "max_temperature"], // Select specific columns
       where: {
         record_date: {
-          [Op.between]: [dates.from_date, dates.to_date], // Filters records between the two dates
+          [Op.between]: [from_date, to_date], // Filters records between the two dates
         },
       },
       order: [["record_date", "ASC"]], // Orders by record_date in ascending order
     });
-    if (result.length == 0) {
-      throw new Error(`No temperature found`);
+    if (result.length === 0) {
+      throw new TemperatureNotFound();
     }
+
     const file = await generateReport(result);
-    if (fs.existsSync(file)) {
-      return file;
-      res.status(200).download(file, (err) => {
-        if (err) {
-          console.error("Error sending file:", err);
-          throw new ReportGenerateError();
-        }
-        fs.unlink(file, (unlinkErr) => {
-          if (unlinkErr) {
-            console.error("Error deleting file:", unlinkErr);
-          }
-        });
-        return true;
-      });
-    } else {
+    if (!fs.existsSync(file)) {
       console.error("File does not exist:", file);
       throw new FileNotFound();
     }
+
+    return file; // Return the file path to the controller
   },
 };
 
