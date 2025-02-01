@@ -17,7 +17,6 @@ import {
 // await User.sync({ alter: true });
 // await Device.sync({ alter: true });
 
-
 const AuthService = {
   //  Function to allow users to Register
   userRegistrationService: async (UserData) => {
