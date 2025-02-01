@@ -1,5 +1,5 @@
 // configuration for Databases 
-import mysql from "mysql";
+import mysql from "mysql2";
 import dotenv from "dotenv";
 import util from "util";
 import { Sequelize } from "sequelize";
