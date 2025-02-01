@@ -16,12 +16,13 @@ import limiter from "./src/middleware/ratelimit.js";
 const app = express(); // initialize express
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const corsOptions = {
-  origin: "http://localhost:3000", //(https://your-client-app.com)    allowing particular origin
+  origin: "*", //(https://your-client-app.com)    allowing particular origin
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true,
 };
 setupMiddleware(app);
 swaggerDocs(app);
+app.set("trust proxy", true);
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(bodyParser.json());
