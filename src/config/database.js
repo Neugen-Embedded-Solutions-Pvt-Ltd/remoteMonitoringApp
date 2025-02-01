@@ -19,10 +19,6 @@ const pool = mysql.createPool({
   port: process.env.DB_PORT,
   host: process.env.DB_HOST,
 });
-
-const query = util.promisify(pool.query).bind(pool);  // remove promise method from codebase, which is older method
-
-
 // Establish the connection
 pool.getConnection((err, connection) => {
   if (err) {
@@ -40,7 +36,14 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: "mysql",
+
+});
+export const sequelize = new Sequelize(
+  configs.database,
+  configs.username,
+  configs.password,
+  {
+    host: configs.host,
+    dialect: configs.dialect,
   }
 );
-
-export default query;
