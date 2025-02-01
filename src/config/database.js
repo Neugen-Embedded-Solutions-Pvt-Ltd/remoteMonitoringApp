@@ -1,7 +1,6 @@
 // configuration for Databases 
 import mysql from "mysql2";
-import dotenv from "dotenv";
-import util from "util";
+import dotenv from "dotenv"; 
 import { Sequelize } from "sequelize";
 
 if (process.env.NODE_ENV !== 'dev') {
@@ -38,6 +37,4 @@ export const sequelize = new Sequelize(
     dialect: "mysql",
 
   }
-);
-
-export default query;
+); 
