@@ -7,7 +7,6 @@ import UserToken from "../models/TokenModel.js";
 // security for API authorization
 async function verifyToken(req, res, next) {
   try { 
-    console.log(req.headers);
     let accessToken = req.headers["authorization"]; // get token from header
     // let refreshToken = req.headers["refreshtoken"];
 
