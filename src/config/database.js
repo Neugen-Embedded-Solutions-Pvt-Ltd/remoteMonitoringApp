@@ -1,5 +1,5 @@
 // configuration for Databases 
-import mysql from "mysql";
+import mysql from "mysql2";
 import dotenv from "dotenv";
 import util from "util";
 import { Sequelize } from "sequelize";
@@ -16,12 +16,9 @@ const pool = mysql.createPool({
   database: process.env.DB_NAME,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
   host: process.env.DB_HOST,
 });
-
-const query = util.promisify(pool.query).bind(pool);  // remove promise method from codebase, which is older method
-
-
 // Establish the connection
 pool.getConnection((err, connection) => {
   if (err) {
@@ -30,17 +27,17 @@ pool.getConnection((err, connection) => {
   }
   console.log("Database connection ready");
   connection.release(); // Release the connection back to the pool
-});
- 
-const configs= {
-  database: "device",
-  username: "root",
-  password: "password",
-  host: "localhost",
-  dialect: "mysql",  // or 'postgres', 'sqlite', 'mariadb', 'mssql'
-  port: 3306        // optional, depends on your database
-};
+}); 
 
+export const sequelize = new Sequelize(
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
+  {
+    host: process.env.DB_HOST,
+    dialect: "mysql",
+
+});
 export const sequelize = new Sequelize(
   configs.database,
   configs.username,
@@ -50,5 +47,3 @@ export const sequelize = new Sequelize(
     dialect: configs.dialect,
   }
 );
-
-export default query;

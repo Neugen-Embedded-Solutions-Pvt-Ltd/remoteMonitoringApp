@@ -15,6 +15,8 @@ import {
   AppError,
 } from "../../utils/AppError.js";
 // await User.sync({ alter: true });
+// await Device.sync({ alter: true });
+
 
 const AuthService = {
   //  Function to allow users to Register
@@ -40,7 +42,7 @@ const AuthService = {
     let findUserByEmail = await User.findOne({ where: { email: email } });
     if (findUserByUsername != null || findUserByEmail != null) {
       throw new UserExistsError();
-    }
+    } 
     let getDeviceId = await Device.findOne({ where: { device_id: device_id } });
     if (getDeviceId == null) {
       throw new DeviceNotRegisteredError();
