@@ -1,9 +1,7 @@
 // OTP sender (not implemented)
 
 import nodeMailer from "nodemailer";
-
 import dotenv from "dotenv";
-
 dotenv.config();
 
 const sendEmail = async (options) => {

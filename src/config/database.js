@@ -30,24 +30,15 @@ pool.getConnection((err, connection) => {
   }
   console.log("Database connection ready");
   connection.release(); // Release the connection back to the pool
-});
- 
-const configs= {
-  database: "device",
-  username: "root",
-  password: "password",
-  host: "localhost",
-  dialect: "mysql",  // or 'postgres', 'sqlite', 'mariadb', 'mssql'
-  port: 3306        // optional, depends on your database
-};
+}); 
 
 export const sequelize = new Sequelize(
-  configs.database,
-  configs.username,
-  configs.password,
+  process.env.DB_NAME,
+  process.env.DB_USER,
+  process.env.DB_PASSWORD,
   {
-    host: configs.host,
-    dialect: configs.dialect,
+    host: process.env.DB_HOST,
+    dialect: "mysql",
   }
 );
 
