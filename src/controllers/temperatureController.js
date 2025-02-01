@@ -77,11 +77,11 @@ const tempController = {
         }
 
         // Delete the file after it has been sent
-        // fs.unlink(file, (unlinkErr) => {
-        //   if (unlinkErr) {
-        //     console.error("Error deleting file:", unlinkErr);
-        //   }
-        // });
+        fs.unlink(file, (unlinkErr) => {
+          if (unlinkErr) {
+            console.error("Error deleting file:", unlinkErr);
+          }
+        });
       });
     } catch (error) {
       console.error("Error in /generate-report route:", error);

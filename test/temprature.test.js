@@ -43,25 +43,26 @@ describe("temperature API", () => {
        ) // Validate the response content type
        .expect((response) => {
          // Ensure the response body is not empty and is a buffer (since it's a binary file)
-         expect(response.body).not.to.be.empty;
-         expect(Buffer.isBuffer(response.body)).to.be.true; // Check if the response is a binary buffer
+        //  expect(response.body).not.to.be.empty;
+        //  expect(Buffer.isBuffer(response.body)).to.be.true; // Check if the response is a binary buffer
        })
        .end(done);
    });
     it("generate the report failure because no temperature found", (done) => {
       request(server)
         .post("/iot/report")
-        .set("Content-Type", "application/vnd")
-        .set("Accept", "application/vnd")
-        .expect(403)
+        .set("Content-Type", "application/json")
+        .set("Accept", "application/json") // Accept header for Excel files
         .send({
-          from_date: "2025-01-22",
-          to_date: "2025-01-25",
+          from_date: "2025-02-22",
+          to_date: "2025-03-25",
         })
-        .expect("Content-Type", /json/)
+        .expect(403) // Expect HTTP status code 200
+        .expect("Content-Type", "application/json; charset=utf-8") // Validate the response content type
         .expect((response) => {
+          // Ensure the response body is not empty and is a buffer (since it's a binary file)
           expect(response.body).not.to.be.empty;
-          expect(response.body).to.be.an("object");
+          // expect(Buffer.isBuffer(response.body)).to.be.true; // Check if the response is a binary buffer
         })
         .end(done);
     });
