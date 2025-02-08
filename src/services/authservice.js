@@ -106,7 +106,7 @@ const AuthService = {
 
   // Function to allow users to send resetpassword link to email
   sendResetLinkToUser: async ({ email }) => {
-    if (!username) {
+    if (!email) {
       throw new FieldsNotFound(
         "Required fields (email) cannot be empty or undefined"
       );

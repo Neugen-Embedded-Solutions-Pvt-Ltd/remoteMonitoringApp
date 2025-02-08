@@ -1,4 +1,3 @@
-// configuration for Databases 
 import mysql from "mysql2";
 import dotenv from "dotenv"; 
 import { Sequelize } from "sequelize";
@@ -7,8 +6,7 @@ if (process.env.NODE_ENV !== 'dev') {
   dotenv.config({
     path: `.env.${process.env.NODE_ENV}`,
   });
-} 
-
+};
 // Create connection to database
 const pool = mysql.createPool({
   connectionLimit: 10, // Adjust the limit as needed
@@ -22,12 +20,11 @@ const pool = mysql.createPool({
 pool.getConnection((err, connection) => {
   if (err) {
     console.error("Error connecting to the database:", err);
-    throw err; // You might want to handle this more gracefully in production
+    throw err;
   }
   console.log("Database connection ready");
-  connection.release(); // Release the connection back to the pool
+  connection.release();
 }); 
-
 export const sequelize = new Sequelize(
   process.env.DB_NAME,
   process.env.DB_USER,
@@ -35,6 +32,5 @@ export const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST,
     dialect: "mysql",
-
   }
 ); 

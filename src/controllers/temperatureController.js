@@ -9,7 +9,6 @@ const tempController = {
       const result = await TemperatureService.fetchAllTemperatureData(
         req.query
       );
-
       res.status(200).send({
         status: 200,
         message: "success",
@@ -66,9 +65,7 @@ const tempController = {
   // Report generator
   generateTemperatureReport: async (req, res) => {
     try {
-      const file = await TemperatureService.generateReportData(
-        req.body
-      );
+      const file = await TemperatureService.generateReportData(req.body);
       // Send the file to the client
       res.status(200).download(file, (err) => {
         if (err) {
@@ -90,8 +87,7 @@ const tempController = {
           status: error.statusCode,
           message: error.message,
         });
-      } else { 
-         
+      } else {
         res.status(500).json({
           status: 500,
           message: "Internal server error",
