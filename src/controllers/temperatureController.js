@@ -9,7 +9,6 @@ const tempController = {
       const result = await TemperatureService.fetchAllTemperatureData(
         req.query
       );
-
       res.status(200).send({
         status: 200,
         message: "success",

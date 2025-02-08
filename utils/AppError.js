@@ -1,111 +1,92 @@
-class AppError extends Error {
+export class AppError extends Error {
   constructor(message, statusCode) {
     super(message);
     this.statusCode = statusCode;
   }
 }
 
-class UserNotFoundError extends AppError {
+export class UserNotFoundError extends AppError {
   constructor() {
-    super("User not found", 404); // HTTP 409 Not FOund
+    super("User not found", 404);
   }
 }
 
-class UserExistsError extends AppError {
+export class UserExistsError extends AppError {
   constructor() {
-    super("User already exists", 409); // HTTP 409 Conflict
+    super("User already exists", 409);
   }
 }
 
-class InvalidPasswordError extends AppError {
+export class InvalidPasswordError extends AppError {
   constructor() {
-    super("Password Invalid", 409); // HTTP 409 Conflict
+    super("Password Invalid", 409);
   }
 }
 
-class DeviceRegisteredError extends AppError {
+export class DeviceRegisteredError extends AppError {
   constructor() {
-    super("Device is already registered", 409); // HTTP 409 Conflict
+    super("Device is already registered", 409);
   }
 }
 
-class InvalidCredentialsError extends AppError {
+export class InvalidCredentialsError extends AppError {
   constructor() {
-    super("Invalid password", 401); // HTTP 401 Unauthorized
+    super("Invalid password", 401);
   }
 }
 
-class DeviceNotRegisteredError extends AppError {
+export class DeviceNotRegisteredError extends AppError {
   constructor() {
-    super("Device is not registered", 404); // HTTP 404 FOund
+    super("Device is not registered", 404);
   }
 }
 
-class TemperatureRecordsNotAvailable extends AppError {
+export class TemperatureRecordsNotAvailable extends AppError {
   constructor() {
-    super("Temperature Records not available", 404); // HTTP 404 FOund
+    super("Temperature Records not available", 404);
   }
 }
 
-class InvalidParameterError extends AppError {
+export class InvalidParameterError extends AppError {
   constructor() {
-    super("Invalid parameter", 404); // HTTP 404 FOund
+    super("Invalid parameter", 404);
   }
 }
 
-class InvalidTokenOrExpired extends AppError {
+export class InvalidTokenOrExpired extends AppError {
   constructor() {
     super("Invalid token or expired token", 403);
   }
 }
 
-class EmailSendError extends AppError {
+export class EmailSendError extends AppError {
   constructor() {
-    super("Email not able to sent", 408); // HTTP 404 FOund
+    super("Email not able to sent", 408);
   }
 }
 
-class ReportGenerateError extends AppError {
+export class ReportGenerateError extends AppError {
   constructor() {
-    super("temperature report not able generate ", 408); // HTTP 404 FOund
+    super("temperature report not able generate ", 408);
   }
 }
-class FileNotFound extends AppError {
+export class FileNotFound extends AppError {
   constructor() {
-    super("File not found", 404); // HTTP 404 FOund
+    super("File not found", 404);
   }
 }
-class InvalidDate extends AppError {
+export class InvalidDate extends AppError {
   constructor() {
-    super("Invalid date", 403); // HTTP 404 FOund
+    super("Invalid date", 403);
   }
 }
-class TemperatureNotFound extends AppError {
+export class TemperatureNotFound extends AppError {
   constructor() {
-    super("No temperature found", 403); // HTTP 404 FOund
+    super("No temperature found", 403);
   }
 }
-class FieldsNotFound extends AppError {
+export class FieldsNotFound extends AppError {
   constructor(message = "Invalid fields", statusCode = 403) {
     super(message, statusCode); // Default message and status code
   }
 }
- 
-export {
-  AppError,
-  UserNotFoundError,
-  UserExistsError,
-  DeviceRegisteredError,
-  InvalidCredentialsError,
-  DeviceNotRegisteredError,
-  InvalidPasswordError,
-  TemperatureRecordsNotAvailable,
-  InvalidParameterError,
-  EmailSendError,
-  InvalidTokenOrExpired,
-  ReportGenerateError,
-  FileNotFound,
-  InvalidDate,
-  TemperatureNotFound,
-  FieldsNotFound,
-};
