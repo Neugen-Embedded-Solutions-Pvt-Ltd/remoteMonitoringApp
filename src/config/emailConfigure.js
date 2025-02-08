@@ -14,14 +14,13 @@ const sendEmail = async (options) => {
   });
   const mailOptions = {
     from: "manojarun4820@gmail.com",
-    to: "manoj.a.31929@gmail.com", //options.to,
+    to: "manoj.a.31929@gmail.com",
     subject: options.subject,
     html: options.message,
-  }; 
-
+  };
   try {
     // Send the email
-    await transporter.sendMail(mailOptions); 
+    await transporter.sendMail(mailOptions);
     console.log("Email sent successfully!");
   } catch (error) {
     console.error("Error sending email:", error);
