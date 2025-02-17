@@ -33,6 +33,11 @@ const Helpers = {
     let filteredRecords = filteredRecord.slice(startIndex, endIndex);
     return { currentPage, pageLimit, filteredRecords };
   },
+
+  validateEmail: (email) => {
+    let re = /\S+@\S+\.\S+/;
+    return re.test(email);
+  },
 };
 
 export default Helpers;

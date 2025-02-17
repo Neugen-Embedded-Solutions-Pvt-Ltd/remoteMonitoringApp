@@ -1,6 +1,16 @@
 import nodeMailer from "nodemailer";
-import dotenv from "dotenv";
-dotenv.config();
+/**
+ * Sends an email using the specified options.
+ *
+ * @param {Object} options - The email options.
+ * @param {string} options.to - The recipient's email address.
+ * @param {string} options.subject - The subject of the email.
+ * @param {string} options.message - The HTML content of the email.
+ *
+ * @returns {Promise<void>} - A promise that resolves when the email is sent successfully.
+ *
+ * @throws {Error} - Throws an error if the email fails to send.
+ */
 const sendEmail = async (options) => {
   const transporter = nodeMailer.createTransport({
     service: "gmail",
